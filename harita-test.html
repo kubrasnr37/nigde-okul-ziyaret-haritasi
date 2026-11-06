@@ -307,25 +307,26 @@ function saveMapTilerKey(){
 function initStreetMap(){
  if(!window.L||!boundaryGeoJson)return false;
  try{
-  streetMap=L.map('streetMap',{zoomControl:true,preferCanvas:true,scrollWheelZoom:true})
+  // Leaflet must measure a visible container on first initialization.
+  $('map').classList.add('street-active');
+  streetMap=L.map('streetMap',{zoomControl:true,preferCanvas:true,scrollWheelZoom:true,worldCopyJump:true,minZoom:7})
     .setView([37.92,34.63],9);
   // Alan adı kısıtlamalı MapTiler tarayıcı anahtarı.
   const key='9om3s1lQug6vqLaNFiPE';
   if(key)enableMapTiler(key);
-  $('map').classList.add('street-active');
   document.getElementById('mapTilerSetup').style.display='none';
   $('map').querySelector('.offlineTopLabel').innerHTML='<span class="onlineOffDot"></span> SOKAK HARİTASI <span class="offlineTopSub">· MapTiler Streets</span>';
   $('geoAccuracy').textContent='MapTiler Streets sokak haritası · İlçe dolguları yakınlaşınca kaybolur';
   $('mapstate').textContent='İlçe sınırları uzaktan %50 opaklıkta; yakınlaştıkça %25, okul düzeyinde %0. Okul noktaları mevcut koordinatları kullanır.';
   streetMap.on('zoomend',refreshStreetDistricts);
   refreshStreetDistricts();
-  setTimeout(()=>streetMap.invalidateSize(),150);
+  setTimeout(()=>{if(streetMap){streetMap.invalidateSize({pan:false});if(initialStreetFit)fitMap();}},250);
   return true;
  }catch(e){console.warn('Sokak haritası başlatılamadı, SVG yedeği kullanılıyor:',e);streetMap=null;return false;}
 }
 
 function initMap(){
- if(initStreetMap()){map={street:true};updateDistrictLegend();render();fitMap();return;}
+ if(initStreetMap()){map={street:true};updateDistrictLegend();render();setTimeout(()=>{if(streetMap){streetMap.invalidateSize({pan:false});fitMap();}},300);return;}
  map={offline:true};
  const svg=$('mapSvg');
  $('basemap').textContent='▧ İlçe renklerini gizle';
@@ -347,11 +348,12 @@ function updateDistrictLegend(){
 function zoomAt(factor,fx,fy){if(streetMap){streetMap.setZoom(streetMap.getZoom()+(factor<1?1:-1));return;}if(!view)return;let w=Math.max(40,Math.min(4200,view.w*factor));let h=w/($('map').clientWidth/Math.max(1,$('map').clientHeight));let px=view.x+view.w*fx,py=view.y+view.h*fy;view={x:px-w*fx,y:py-h*fy,w,h};drawMap(activeMapGroups)}
 function fitMap(){
  if(streetMap){
-  // İlk açılışta okul noktalarından ziyade gerçek altı ilçe sınırlarını dengeli kadraja al.
-  if(initialStreetFit && $('district').value==='all' && boundaryGeoJson){
+  // İlk açılışta sabit Niğde kadrajı: gizli/ölçülmemiş harita üzerinde fitBounds çalıştırma.
+  if(initialStreetFit && $('district').value==='all'){
     initialStreetFit=false;
-    const bounds=L.geoJSON(boundaryGeoJson).getBounds();
-    if(bounds.isValid()){streetMap.fitBounds(bounds.pad(.07),{maxZoom:10});return;}
+    streetMap.invalidateSize({pan:false});
+    streetMap.setView([37.92,34.63],9,{animate:false});
+    return;
   }
   initialStreetFit=false;
   const pts=activeMapGroups.map(g=>[g.lat,g.lon]);
