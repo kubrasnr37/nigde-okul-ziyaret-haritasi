@@ -367,6 +367,7 @@ function fitMap(){
 }
 function drawMap(gp){
  if(!map)return;drawnGroups=gp;
+ if(streetMap){drawStreetPins(gp);return;}
  if(!view){const c=project(37.87,34.6);view={x:c.x-750,y:c.y-350,w:1500,h:700}}
  let mapheight=Math.max(1,$('map').clientHeight),ppu=view.h/mapheight;
  const gridStep=view.h<280?.05:view.h<780?.10:.2;
