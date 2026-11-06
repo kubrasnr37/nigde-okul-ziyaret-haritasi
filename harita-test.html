@@ -270,19 +270,31 @@ function makeRoadPaths(){
 function districtOpacity(zoom){
   return zoom>=12?0:zoom>=10?0.25:0.50;
 }
+// İlçe poligonlarını her zoom'da yeniden üretme; yalnızca stili güncelle.
+let streetDistrictSource=null;
 function refreshStreetDistricts(){
  if(!streetMap)return;
- if(streetDistrictLayer){streetMap.removeLayer(streetDistrictLayer);streetDistrictLayer=null;}
- if(!showDistrictColors||!boundaryGeoJson)return;
- const z=streetMap.getZoom(),opacity=districtOpacity(z),selected=$('district').value;
- streetDistrictLayer=L.geoJSON(boundaryGeoJson,{
-   interactive:false,
-   style:f=>{const key=districtForFeature(f),c=COLOR_ZONES[key]||{fill:'#e6a879',stroke:'#a46c49'};
-     return {color:c.stroke,weight:z>=12?1:1.6,opacity:z>=12?.35:.75,
-       fillColor:c.fill,fillOpacity:selected!=='all'&&key!==selected?opacity*.4:opacity};}
- }).addTo(streetMap);
- if(streetPinsLayer)streetPinsLayer.bringToFront();
+ if(!showDistrictColors||!boundaryGeoJson){
+   if(streetDistrictLayer)streetMap.removeLayer(streetDistrictLayer);
+   return;
+ }
+ const z=streetMap.getZoom(), opacity=districtOpacity(z), selected=$('district').value;
+ const style=f=>{
+   const key=districtForFeature(f),c=COLOR_ZONES[key]||{fill:'#e6a879',stroke:'#a46c49'};
+   return {color:c.stroke,weight:z>=12?1:1.6,opacity:z>=12?.35:.75,
+     fillColor:c.fill,fillOpacity:selected!=='all'&&key!==selected?opacity*.4:opacity};
+ };
+ if(!streetDistrictLayer||streetDistrictSource!==boundaryGeoJson){
+   if(streetDistrictLayer)streetMap.removeLayer(streetDistrictLayer);
+   streetDistrictLayer=L.geoJSON(boundaryGeoJson,{interactive:false,style}).addTo(streetMap);
+   streetDistrictSource=boundaryGeoJson;
+   if(streetPinsLayer)streetPinsLayer.bringToFront();
+ }else{
+   if(!streetMap.hasLayer(streetDistrictLayer))streetDistrictLayer.addTo(streetMap);
+   streetDistrictLayer.setStyle(style);
+ }
 }
+
 function drawStreetPins(gp){
  if(!streetMap)return;
  if(streetPinsLayer)streetMap.removeLayer(streetPinsLayer);
@@ -326,6 +338,7 @@ function initStreetMap(){
   $('map').querySelector('.offlineTopLabel').innerHTML='<span class="onlineOffDot"></span> SOKAK HARİTASI <span class="offlineTopSub">· MapTiler Streets</span>';
   $('geoAccuracy').textContent='MapTiler Streets sokak haritası · İlçe dolguları yakınlaşınca kaybolur';
   $('mapstate').textContent='İlçe sınırları uzaktan %50 opaklıkta; yakınlaştıkça %25, okul düzeyinde %0. Okul noktaları mevcut koordinatları kullanır.';
+  streetMap.on('zoom',refreshStreetDistricts);
   streetMap.on('zoomend',refreshStreetDistricts);
   refreshStreetDistricts();
   requestAnimationFrame(()=>requestAnimationFrame(startNigdeView));
