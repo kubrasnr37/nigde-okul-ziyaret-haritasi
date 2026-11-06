@@ -286,9 +286,9 @@ function refreshStreetDistricts(){
  };
  if(!streetDistrictLayer||streetDistrictSource!==boundaryGeoJson){
    if(streetDistrictLayer)streetMap.removeLayer(streetDistrictLayer);
-   streetDistrictLayer=L.geoJSON(boundaryGeoJson,{interactive:false,style}).addTo(streetMap);
+   streetDistrictLayer=L.geoJSON(boundaryGeoJson,{interactive:false,pane:'districtShapes',style}).addTo(streetMap);
    streetDistrictSource=boundaryGeoJson;
-   if(streetPinsLayer)streetPinsLayer.bringToFront();
+   // School markers live in Leaflet's marker pane above the district pane.
  }else{
    if(!streetMap.hasLayer(streetDistrictLayer))streetDistrictLayer.addTo(streetMap);
    streetDistrictLayer.setStyle(style);
@@ -331,6 +331,10 @@ function initStreetMap(){
   $('map').classList.add('street-active');
   streetMap=L.map('streetMap',{zoomControl:true,preferCanvas:false,scrollWheelZoom:true,worldCopyJump:false,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false,minZoom:8,maxZoom:19,maxBounds:[[36.9,33.2],[39.1,36.1]],maxBoundsViscosity:1})
     .setView([37.94,34.72],8,{animate:false});
+  // Keep district shapes below markers, independently of zoom and redraw order.
+  streetMap.createPane('districtShapes');
+  streetMap.getPane('districtShapes').style.zIndex='410';
+  streetMap.getPane('districtShapes').style.pointerEvents='none';
   // Alan adı kısıtlamalı MapTiler tarayıcı anahtarı.
   const key='9om3s1lQug6vqLaNFiPE';
   if(key)enableMapTiler(key);
