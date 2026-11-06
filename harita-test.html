@@ -301,7 +301,7 @@ function enableMapTiler(key){
 function saveMapTilerKey(){
  const key=document.getElementById('mapTilerKey').value.trim();
  if(!key){alert('MapTiler API anahtarını girin.');return;}
- sessionStorage.setItem('nigde_maptiler_test_key',key);
+ localStorage.setItem('nigde_maptiler_test_key',key);
  enableMapTiler(key);
 }
 function initStreetMap(){
@@ -309,12 +309,11 @@ function initStreetMap(){
  try{
   streetMap=L.map('streetMap',{zoomControl:true,preferCanvas:true,scrollWheelZoom:true})
     .setView([37.92,34.63],9);
-  // Test anahtarı yalnızca bu tarayıcı sekmesinin belleğinde tutulur.
-  // MapTiler anahtarı girilince döşeme katmanı etkinleşir.
-  const key=sessionStorage.getItem('nigde_maptiler_test_key')||'';
+  // Alan adı kısıtlamalı MapTiler tarayıcı anahtarı.
+  const key='9om3s1lQug6vqLaNFiPE';
   if(key)enableMapTiler(key);
   $('map').classList.add('street-active');
-  if(!sessionStorage.getItem('nigde_maptiler_test_key'))document.getElementById('mapTilerSetup').style.display='block';
+  document.getElementById('mapTilerSetup').style.display='none';
   $('map').querySelector('.offlineTopLabel').innerHTML='<span class="onlineOffDot"></span> SOKAK HARİTASI <span class="offlineTopSub">· MapTiler Streets</span>';
   $('geoAccuracy').textContent='MapTiler Streets sokak haritası · İlçe dolguları yakınlaşınca kaybolur';
   $('mapstate').textContent='İlçe sınırları uzaktan %50 opaklıkta; yakınlaştıkça %25, okul düzeyinde %0. Okul noktaları mevcut koordinatları kullanır.';
