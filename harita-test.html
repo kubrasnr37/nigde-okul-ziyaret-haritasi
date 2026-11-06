@@ -97,7 +97,7 @@
 <div class="field"><label>Haritada konum</label><select id="located"><option value="all">Tüm kayıtlar</option><option value="yes">Koordinatlı kurum</option><option value="no">Koordinatı bekleyen</option></select></div>
 <div class="line"></div><div class="legend"><span><i class="bubble" style="background:var(--red)"></i>Ziyaret edilmedi</span><span><i class="bubble" style="background:var(--green)"></i>Ziyaret edildi</span><span><i class="bubble" style="background:#cc8f25"></i>Ortak / karma</span></div>
 <div class="notebox"><b>Aynı adreste birden fazla kurum</b><div style="margin-top:5px">Haritadaki sayılı işarete tıkla; aynı binadaki okulları ayrı ayrı seçip ziyaret kaydı ekleyebilirsin.</div></div>
-<div class="notebox"><b>Gerçek sokak haritası</b><div style="margin-top:5px">İlçeler sokak haritası üzerinde uzaktan %25 saydam renkle ayrılır; yakınlaştıkça dolgu kaybolur. Altı ilçenin <strong>OpenStreetMap idari sınırları</strong> bu HTML dosyasına gömülüdür. Bunlar resmî onaylı kadastro sınırları değildir. Okul işaretleri Plus Code hesaplarına dayanır; ilçe, belde, köy ve mahalle bilgilerini ayrıca kontrol edin. Harita zemini MapTiler üzerinden yüklenir. İlçe sınırları ve okul koordinatları mevcut sistemden alınır.</div></div>
+<div class="notebox"><b>Gerçek sokak haritası</b><div style="margin-top:5px">İlçeler sokak haritası üzerinde uzaktan %50, ilçe düzeyinde %25 opaklıkta pastel renklerle ayrılır; okul düzeyinde dolgu kaybolur. Altı ilçenin <strong>OpenStreetMap idari sınırları</strong> bu HTML dosyasına gömülüdür. Bunlar resmî onaylı kadastro sınırları değildir. Okul işaretleri Plus Code hesaplarına dayanır; ilçe, belde, köy ve mahalle bilgilerini ayrıca kontrol edin. Harita zemini MapTiler üzerinden yüklenir. İlçe sınırları ve okul koordinatları mevcut sistemden alınır.</div></div>
 <div class="notebox"><b>Veri kaynağı</b><div style="margin-top:5px">3 Kasım 2026 tarihinde iletilen <i>konumlar_2.xlsx</i> dosyasının 6 ilçe sayfası. Kısa Plus Code konumları ilçe merkezi referansıyla çözülmüştür; harita sağlayıcısı üzerinden bağımsız doğrulama yapılmamıştır. Google Maps kısa bağlantıları doğrudan koordinat olarak kullanılmaz.</div></div>
 </aside><main class="main"><div class="stats"><div class="stat"><small>Filtrelenen kurum</small><strong id="stAll">340</strong></div><div class="stat"><small>Ziyaret edilen</small><strong id="stVisited" class="green">0</strong></div><div class="stat"><small>Ziyaret edilmeyen</small><strong id="stPending" class="red">340</strong></div><div class="stat"><small>Koordinatlı kurum</small><strong id="stLocated">277</strong></div><div class="stat"><small>Harita işareti</small><strong id="stPoints">277</strong></div><div class="stat"><small>Toplam öğrenci</small><strong id="stStudents">—</strong><small id="stStudentsCoverage">Veri bekleniyor</small></div><div class="stat"><small>Toplam öğretmen</small><strong id="stTeachers">—</strong><small id="stTeachersCoverage">Veri bekleniyor</small></div></div>
 <section class="mapbox"><div class="mapbar"><h2>Niğde Eğitim Kurumları Ziyaret Haritası <small style="font:500 11px Segoe UI,Arial;color:#7790a4;margin-left:7px">Sokak haritası</small></h2><div class="mapbuttons"><button id="basemap" title="Şematik ilçe renk alanlarını göster/gizle">▧ Turuncu bölgeleri gizle</button><button id="fit">↗ Konumlara odaklan</button><button id="boundaries">▧ İlçe renklerini gizle</button><button id="boundaryFileBtn" title="Resmî veya doğrulanmış sınır dosyanı içe aktar">⬆ Gerçek sınır GeoJSON yükle</button><input type="file" id="boundaryFile" accept=".geojson,.json,application/json" hidden><button id="roadsFileBtn" title="Gerçek yol çizgilerini içeren GeoJSON dosyasını içe aktar">＋ Yol katmanı yükle</button><input type="file" id="roadsFile" accept=".geojson,.json,application/json" hidden><select id="roadStyle" class="roadSelect" title="Yol çizgisi kalınlığı" aria-label="Yol çizgisi kalınlığı" disabled><option value="0.65">Yollar · çok ince</option><option value="1" selected>Yollar · ince</option><option value="1.35">Yollar · orta</option></select><button id="csv">↓ Görünenleri CSV indir</button></div></div><div id="map" aria-label="Kurumların gerçek koordinatlarında gösterildiği çevrimdışı harita">
@@ -260,7 +260,7 @@ function makeRoadPaths(){
 }
 // OpenStreetMap tabanlı görünüm; internet veya Leaflet yoksa mevcut SVG kullanılır.
 function districtOpacity(zoom){
-  return zoom>=12?0:zoom>=10?0.10:0.25;
+  return zoom>=12?0:zoom>=10?0.25:0.50;
 }
 function refreshStreetDistricts(){
  if(!streetMap)return;
@@ -317,7 +317,7 @@ function initStreetMap(){
   if(!sessionStorage.getItem('nigde_maptiler_test_key'))document.getElementById('mapTilerSetup').style.display='block';
   $('map').querySelector('.offlineTopLabel').innerHTML='<span class="onlineOffDot"></span> SOKAK HARİTASI <span class="offlineTopSub">· MapTiler Streets</span>';
   $('geoAccuracy').textContent='MapTiler Streets sokak haritası · İlçe dolguları yakınlaşınca kaybolur';
-  $('mapstate').textContent='İlçe sınırları uzaktan %25 opaklıkta; yakınlaştıkça %10, okul düzeyinde %0. Okul noktaları mevcut koordinatları kullanır.';
+  $('mapstate').textContent='İlçe sınırları uzaktan %50 opaklıkta; yakınlaştıkça %25, okul düzeyinde %0. Okul noktaları mevcut koordinatları kullanır.';
   streetMap.on('zoomend',refreshStreetDistricts);
   refreshStreetDistricts();
   setTimeout(()=>streetMap.invalidateSize(),150);
@@ -380,7 +380,7 @@ function drawMap(gp){
  if(showDistrictColors){
    if(boundaryGeoJson)patches=makeBoundaryPaths();
    else patches=getZonesForView().map(z=>{const p=COLOR_ZONES[z.name];let selected=$('district').value;
-     let opacity=(selected==='all'||selected===z.name)?0.25:0.10;
+     let opacity=(selected==='all'||selected===z.name)?0.50:0.10;
      return '<path class="district-zone" d="'+pathOf(z.poly)+'" fill="'+p.fill+'" fill-opacity="'+opacity+'" stroke="'+p.stroke+'"/>';
    }).join('');
  }
