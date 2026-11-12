@@ -79,9 +79,43 @@
 .editgrid label.participant-option{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:10px;width:100%;margin:0;padding:3px 0;text-align:left;font-size:13px;font-weight:400;cursor:pointer;}
 .editgrid label.participant-option input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox;display:block;flex:0 0 16px;width:16px!important;min-width:16px;max-width:16px;height:16px!important;min-height:16px;margin:0!important;padding:0!important;border:0;box-shadow:none;accent-color:#1e567f;}
 .editgrid label.participant-option span{display:block;flex:1;text-align:left;line-height:1.4;white-space:normal;}
+
+/* Ziyaret analiz ekrani: mevcut haritadan ayri, salt-okunur katman */
+#analysisOverlay{position:fixed;inset:0;z-index:4500;background:#f5f7fa;overflow:auto;display:none;color:#1b3048}
+#analysisOverlay.open{display:block}
+.analysisTop{position:sticky;top:0;z-index:3;background:#172d44;color:white;padding:15px max(18px,calc((100vw - 1220px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:3px solid #e2a061}
+.analysisTop h2{color:white;font:700 22px 'Palatino Linotype',Georgia,serif}
+.analysisTop button{border-radius:8px;border:1px solid #ffffff70;background:#ffffff13;color:white;padding:9px 14px}
+.analysisMain{max-width:1220px;margin:0 auto;padding:22px 18px 55px}
+.analysisFilters{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:0 0 18px}
+.analysisFilters label{font-size:12px;color:#607489;font-weight:700;display:flex;flex-direction:column;gap:5px}
+.analysisFilters select{border:1px solid #cedae6;background:white;border-radius:8px;padding:9px;min-width:190px;color:#1b3048}
+.analysisSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.analysisKpi,.analysisPanel{border:1px solid #dce5ee;border-radius:12px;background:white;box-shadow:0 7px 26px rgba(23,45,68,.045)}
+.analysisKpi{padding:16px}
+.analysisKpi small{color:#68798d;display:block;font-size:12px}
+.analysisKpi strong{display:block;font-size:30px;line-height:1.3;margin:4px 0;color:#172d44;font-variant-numeric:tabular-nums}
+.analysisKpi .green{color:#159264}.analysisKpi .red{color:#d83c50}
+.analysisColumns{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.analysisPanel{padding:17px;min-width:0}
+.analysisPanel h3{font:700 18px 'Palatino Linotype',Georgia,serif;margin:0 0 5px;color:#172d44}
+.analysisPanel p{font-size:12px;color:#68798d;margin:0 0 14px}
+.analysisBarRow{display:grid;grid-template-columns:100px minmax(0,1fr) 88px;gap:10px;align-items:center;margin:11px 0;font-size:12px}
+.analysisTrack{height:13px;border-radius:20px;background:#edf2f6;overflow:hidden}
+.analysisFill{height:100%;background:#159264;border-radius:20px;min-width:0}
+.analysisMonth{background:#7d9cba}
+.analysisBarRow .num{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}
+.analysisWide{grid-column:1 / -1}
+.analysisTableWrap{overflow:auto;max-height:370px;border:1px solid #e7edf3;border-radius:9px}
+.analysisTableWrap table{width:100%;min-width:530px}
+.analysisTableWrap td,.analysisTableWrap th{padding:9px 11px}
+.analysisEmpty{padding:30px 8px;text-align:center;color:#75879a;font-size:13px}
+.analysisStatus{font-size:12px;color:#677f92;margin:0 0 16px}
+.analysisFilters button{padding:10px 13px;background:#1e567f;color:white;border:0;border-radius:8px}
+@media(max-width:760px){.analysisColumns{grid-template-columns:1fr}.analysisSummary{grid-template-columns:repeat(2,minmax(0,1fr))}.analysisBarRow{grid-template-columns:78px minmax(0,1fr) 72px}.analysisTop h2{font-size:18px}}
 </style></head>
 <body>
-<header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
+<header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
 <div id="cloudBanner" role="status" class="cloudbanner">Çevrimiçi bağlantı henüz yapılandırılmadı. “Yerel deneme modu” ile yeni alanları test edebilirsiniz; bu kayıtlar başka cihazlarda görünmez.</div><div class="layout"><aside><div class="sidehead"><h2>Arama ve filtreleme</h2><button id="reset" class="smallbtn">Temizle</button></div>
 <div class="field"><label>Kurum adı veya kodu</label><input type="search" id="search" placeholder="Kurum ara..."></div>
 <div class="field"><label>İlçe</label><select id="district"></select></div>
@@ -116,6 +150,29 @@
 </div><div class="mapnote"><span id="mapstate">Gerçek ilçe sınırları turuncu tonlarda gösteriliyor. Yol katmanı isteğe bağlıdır.</span><span>Eksik veya ilçe dışındaki okul noktaları gösterilmez; bina konumları yönetici tarafından ayrıca onaylanabilir.</span></div></section>
 <div class="twosections"><section class="tablebox"><div class="thead"><h2>Kurum listesi</h2><small id="listCount" class="muted">340 kurum</small></div><div class="scroll"><table><thead><tr><th>Kurum adı</th><th>İlçe</th><th>Tür</th><th>Öğrenci / Öğretmen</th><th>Konum</th><th>Ziyaret</th></tr></thead><tbody id="rows"></tbody></table></div></section><section class="rightcard"><div class="sidecardhead"><h2>Konum kontrolü gerekiyor</h2><div class="muted" style="font-size:12px;margin-top:3px">Konumu eksik ya da ilçe uyuşmazlığı olan</div></div><div id="missing"></div></section></div></main></div>
 <footer class="foot">Sürüm 9: Öğrenci/öğretmen toplamları ve ziyaret türü eklendi. Boş sayısal alanlar 0 kabul edilmez. Yerel deneme modu gerçek yetkilendirme değildir. Niğde ilçe sınırları OpenStreetMap katkıcılarından alınmıştır (ODbL); resmî idari referans yerine geçmez. Çevrimiçi sürümün kayıt ve yönetici yetkileri Supabase bağlantısı ve güvenli RLS kuralları kurulduğunda etkinleşir. Kayıtlar otomatik olarak bu HTML dosyasında saklanmaz.</footer>
+
+<section id="analysisOverlay" role="dialog" aria-modal="true" aria-label="Ziyaret analizi">
+ <header class="analysisTop"><div><h2>İl Millî Eğitim Müdürü · Ziyaret Analizi</h2><div style="font-size:12px;color:#cbd8e4">Niğde geneli · 6 ilçe · Eğitim-öğretim yılı bazlı izleme</div></div><button id="analysisCloseBtn" type="button">← Haritaya dön</button></header>
+ <div class="analysisMain">
+  <div class="analysisFilters">
+   <label>Dönem<select id="analysisPeriod"><option value="2026-2027">2026–2027 Eğitim-Öğretim Yılı</option><option value="2025-2026">2025–2026 Eğitim-Öğretim Yılı</option><option value="2027-2028">2027–2028 Eğitim-Öğretim Yılı</option><option value="all">Tüm zamanlar</option></select></label>
+   <label>İlçe<select id="analysisDistrict"><option value="all">Tüm ilçeler</option></select></label>
+   <button id="analysisExportBtn" type="button">↓ Ziyaret edilmeyenleri CSV indir</button>
+  </div>
+  <div id="analysisStatus" class="analysisStatus">Ziyaret kayıtları yükleniyor…</div>
+  <div class="analysisSummary">
+   <div class="analysisKpi"><small>Toplam kurum</small><strong id="akTotal">—</strong></div>
+   <div class="analysisKpi"><small>Ziyaret edilen kurum</small><strong class="green" id="akVisited">—</strong></div>
+   <div class="analysisKpi"><small>Ziyaret edilmeyen kurum</small><strong class="red" id="akPending">—</strong></div>
+   <div class="analysisKpi"><small>Ziyaret oranı</small><strong id="akRate">—</strong><small id="akVisits">Ziyaret kaydı: —</small></div>
+  </div>
+  <div class="analysisColumns">
+   <section class="analysisPanel"><h3>İlçelere göre ziyaret oranı</h3><p>Her kurum, ziyaret sayısı kaç olursa olsun bir kez sayılır.</p><div id="analysisDistrictBars"></div></section>
+   <section class="analysisPanel"><h3>Aylara göre ziyaretler</h3><p>Seçili dönemde gerçekleşen ziyaret kayıtlarının aylık dağılımı.</p><div id="analysisMonthBars"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Henüz ziyaret edilmeyen kurumlar</h3><p>Seçilen dönemde ziyaret kaydı bulunmayan kurumlar. İlçe filtresi uygulanır.</p><div id="analysisPendingTable" class="analysisTableWrap"></div></section>
+  </div>
+ </div>
+</section>
 <div id="shade" class="shade"><div class="modal"><div class="modalhead"><div><h2 id="mTitle">Kurum</h2><div id="mSubtitle" class="subtle"></div></div><button id="close" class="close" aria-label="Kapat">×</button></div><div class="modalcontent" id="modalBody"></div></div></div><div id="toast" class="toast"></div>
 <div id="loginShade" class="shade" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
   <div class="modal" style="width:min(430px,100%)">
@@ -756,6 +813,60 @@ async function startupCloud(){
    showCloudStatus('Veri bağlantısı kurulamadı. Yalnızca yerleşik harita önizlemesi gösteriliyor; ziyaret durumları güncel olmayabilir. Ayrıntı: '+err.message,'error');
  }
 }
+
+
+// Analiz yalnızca mevcut ziyaret kayıtlarını okur; hiçbir veri güncellemesi yapmaz.
+const analyticsState={list:[],pending:[]};
+function aVisitRecords(code,period){return (db.visits[code]||[]).filter(v=>period==='all'||yearOf(v.date)===period);}
+function aEscapeCsv(v){let str=String(v??'');return '"'+str.replace(/"/g,'""')+'"';}
+function analysisData(){
+ const period=$('analysisPeriod').value,district=$('analysisDistrict').value;
+ const list=BASE.filter(s=>district==='all'||s.district===district);
+ const pending=list.filter(s=>aVisitRecords(s.code,period).length===0);
+ const visited=list.length-pending.length;
+ const allVisits=list.flatMap(s=>aVisitRecords(s.code,period));
+ return {period,district,list,pending,visited,allVisits};
+}
+function analysisDraw(){
+ const d=analysisData();analyticsState.list=d.list;analyticsState.pending=d.pending;
+ const ready=!cloud.enabled||cloud.dataReady;
+ $('analysisStatus').textContent=ready?'Her kurum toplamda bir kez sayılır. Ziyaret kaydı sayısı, aynı kuruma yapılan tekrar ziyaretleri de içerir.':'Merkezî kayıtlar yükleniyor; sayılar henüz kesin değil.';
+ for(const [id,value] of Object.entries({akTotal:d.list.length,akVisited:ready?d.visited:'…',akPending:ready?d.pending.length:'…',akRate:ready?(d.list.length?(100*d.visited/d.list.length).toLocaleString('tr-TR',{maximumFractionDigits:1})+'%':'—'):'…'}))$(id).textContent=value;
+ $('akVisits').textContent='Toplam ziyaret kaydı: '+(ready?d.allVisits.length.toLocaleString('tr-TR'):'…');
+ const districts=[...new Set(d.list.map(s=>s.district))].sort((a,b)=>a.localeCompare(b,'tr'));
+ $('analysisDistrictBars').innerHTML=districts.map(name=>{
+  const schools=d.list.filter(s=>s.district===name),done=schools.filter(s=>aVisitRecords(s.code,d.period).length).length;
+  const pct=schools.length?100*done/schools.length:0;
+  return '<div class="analysisBarRow"><span>'+esc(name)+'</span><div class="analysisTrack"><div class="analysisFill" style="width:'+pct.toFixed(2)+'%"></div></div><span class="num">'+done+'/'+schools.length+' · '+Math.round(pct)+'%</span></div>';
+ }).join('')||'<div class="analysisEmpty">Kurum bulunamadı.</div>';
+ const months=new Map();
+ for(const v of d.allVisits){if(!/^\d{4}-\d{2}-\d{2}$/.test(v.date||''))continue;const key=v.date.slice(0,7);months.set(key,(months.get(key)||0)+1);}
+ let keys=[];
+ if(d.period==='all')keys=[...months.keys()].sort();
+ else{const y=Number(d.period.slice(0,4));for(let m=9;m<=12;m++)keys.push(y+'-'+String(m).padStart(2,'0'));for(let m=1;m<=8;m++)keys.push((y+1)+'-'+String(m).padStart(2,'0'));}
+ const max=Math.max(1,...keys.map(k=>months.get(k)||0));
+ $('analysisMonthBars').innerHTML=keys.map(key=>{
+  const value=months.get(key)||0, [y,m]=key.split('-');
+  const title=new Date(Number(y),Number(m)-1,1).toLocaleDateString('tr-TR',{month:'short',year:'numeric'});
+  return '<div class="analysisBarRow"><span>'+esc(title)+'</span><div class="analysisTrack"><div class="analysisFill analysisMonth" style="width:'+(100*value/max).toFixed(2)+'%"></div></div><span class="num">'+value+' ziyaret</span></div>';
+ }).join('')||'<div class="analysisEmpty">Henüz ziyaret kaydı yok.</div>';
+ $('analysisPendingTable').innerHTML=d.pending.length?'<table><thead><tr><th>Kurum kodu</th><th>Kurum adı</th><th>İlçe</th><th>Kurum türü</th></tr></thead><tbody>'+d.pending.slice().sort((a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr')).map(s=>'<tr><td>'+esc(s.code)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.district)+'</td><td>'+esc(s.type)+'</td></tr>').join('')+'</tbody></table>':'<div class="analysisEmpty">Seçilen kapsamda ziyaret edilmeyen kurum yok.</div>';
+ $('analysisExportBtn').disabled=!ready;
+}
+$('analysisDistrict').innerHTML='<option value="all">Tüm ilçeler</option>'+[...new Set(BASE.map(s=>s.district))].sort((a,b)=>a.localeCompare(b,'tr')).map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join('');
+$('analysisOpenBtn').addEventListener('click',()=>{ $('analysisPeriod').value=$('period').value; $('analysisOverlay').classList.add('open');analysisDraw();});
+$('analysisCloseBtn').addEventListener('click',()=>{$('analysisOverlay').classList.remove('open');});
+$('analysisPeriod').addEventListener('change',analysisDraw);
+$('analysisDistrict').addEventListener('change',analysisDraw);
+$('analysisExportBtn').addEventListener('click',()=>{
+ if(cloud.enabled&&!cloud.dataReady)return showToast('Veriler yüklenmeden dışa aktarılmaz.');
+ const rows=[['Kurum kodu','Kurum adı','İlçe','Kurum türü'],...analyticsState.pending.map(s=>[s.code,s.name,s.district,s.type])];
+ const csv='\ufeff'+rows.map(row=>row.map(aEscapeCsv).join(';')).join('\r\n');
+ const a=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+ a.href=url;a.download='Nigde_Ziyaret_Edilmeyen_Kurumlar_'+$('analysisPeriod').value+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+});
+const originalAnalysisRender=render;
+render=function(){originalAnalysisRender();if($('analysisOverlay').classList.contains('open'))analysisDraw();};
 
 initMap();
 startupCloud();
