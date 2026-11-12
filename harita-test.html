@@ -80,6 +80,10 @@
 .editgrid label.participant-option input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox;display:block;flex:0 0 16px;width:16px!important;min-width:16px;max-width:16px;height:16px!important;min-height:16px;margin:0!important;padding:0!important;border:0;box-shadow:none;accent-color:#1e567f;}
 .editgrid label.participant-option span{display:block;flex:1;text-align:left;line-height:1.4;white-space:normal;}
 
+/* Veri katmanı yükleme araçları yalnızca yetkililer içindir. */
+#boundaryFileBtn,#roadsFileBtn,#roadStyle{display:none!important}
+body.authorized-map-tools #boundaryFileBtn,body.authorized-map-tools #roadsFileBtn{display:inline-block!important}
+body.authorized-map-tools #roadStyle{display:inline-block!important}
 /* Ziyaret analiz ekrani: mevcut haritadan ayri, salt-okunur katman */
 #analysisOverlay{position:fixed;inset:0;z-index:4500;background:#f5f7fa;overflow:auto;display:none;color:#1b3048}
 #analysisOverlay.open{display:block}
@@ -112,7 +116,53 @@
 .analysisEmpty{padding:30px 8px;text-align:center;color:#75879a;font-size:13px}
 .analysisStatus{font-size:12px;color:#677f92;margin:0 0 16px}
 .analysisFilters button{padding:10px 13px;background:#1e567f;color:white;border:0;border-radius:8px}
+/* PDF çıktısı için tam listeyi sayfalara bölerek yazdır */
+.analysisPrintHeading{display:none}
+.analysisListCount{font:500 12px 'Segoe UI',Arial,sans-serif;color:#607489}
+@media print{
+ @page{size:A4 portrait;margin:13mm 12mm}
+ html,body{background:#fff!important;overflow:visible!important;width:auto!important;height:auto!important}
+ body> :not(#analysisOverlay){display:none!important}
+ #analysisOverlay{display:block!important;position:static!important;inset:auto!important;height:auto!important;overflow:visible!important;background:#fff!important;color:#172d44!important}
+ .analysisTop,.analysisFilters,.analysisStatus{display:none!important}
+ .analysisPrintHeading{display:block!important;margin-bottom:15px;border-bottom:2px solid #b5a089;padding-bottom:9px}
+ .analysisPrintHeading h2{font:700 17px 'Palatino Linotype',Georgia,serif;margin:0 0 6px}
+ .analysisPrintHeading p{font-size:10px;color:#555;margin:0}
+ .analysisMain{padding:0!important;max-width:none!important;margin:0!important}
+ .analysisSummary{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+ .analysisKpi{padding:9px!important;break-inside:avoid;box-shadow:none!important}
+ .analysisKpi strong{font-size:22px!important}
+ .analysisKpi small{font-size:9px!important}
+ .analysisColumns{display:block!important}
+ .analysisPanel{box-shadow:none!important;border:1px solid #ddd!important;margin:0 0 12px;padding:10px!important;break-inside:auto}
+ .analysisPanel h3{font-size:14px!important}
+ .analysisPanel p{font-size:10px!important}
+ .analysisTableWrap{max-height:none!important;overflow:visible!important;border:0!important}
+ .analysisTableWrap table{min-width:0!important;width:100%!important;table-layout:auto;font-size:9px!important}
+ .analysisTableWrap th,.analysisTableWrap td{font-size:9px!important;padding:5px 6px!important;overflow-wrap:anywhere}
+ .analysisTableWrap th{position:static!important}
+ .analysisTableWrap thead{display:table-header-group}
+ .analysisTableWrap tr{break-inside:avoid;page-break-inside:avoid}
+ .analysisBarRow{break-inside:avoid}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 @media(max-width:760px){.analysisColumns{grid-template-columns:1fr}.analysisSummary{grid-template-columns:repeat(2,minmax(0,1fr))}.analysisBarRow{grid-template-columns:78px minmax(0,1fr) 72px}.analysisTop h2{font-size:18px}}
+/* Kurum PDF raporu ayrı yazdırma görünümüdür. */
+#schoolPrint{display:none}
+@media print{
+ body.school-print > :not(#schoolPrint){display:none!important}
+ body.school-print #schoolPrint{display:block!important;position:static!important;background:#fff!important;color:#1b3048!important;font:11px/1.45 'Times New Roman',serif}
+ body.school-print #analysisOverlay{display:none!important}
+ #schoolPrint h1{font-size:18px;margin:0 0 4px;text-align:center}
+ #schoolPrint h2{font-size:14px;margin:16px 0 6px;border-bottom:1px solid #aaa;padding-bottom:4px}
+ #schoolPrint .reportSubtitle{text-align:center;color:#555;font-size:10px;border-bottom:2px solid #aaa;padding-bottom:10px;margin-bottom:14px}
+ #schoolPrint table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
+ #schoolPrint td,#schoolPrint th{border:1px solid #ddd;padding:6px 8px;vertical-align:top;overflow-wrap:anywhere}
+ #schoolPrint th{width:30%;background:#f5f5f5;position:static}
+ #schoolPrint .schoolVisit{border:1px solid #d5d5d5;padding:9px 11px;margin:9px 0;break-inside:avoid;page-break-inside:avoid}
+ #schoolPrint .schoolVisit strong{font-size:11px}
+ #schoolPrint .schoolVisit p{margin:3px 0;overflow-wrap:anywhere}
+}
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
@@ -158,7 +208,9 @@
    <label>Dönem<select id="analysisPeriod"><option value="2026-2027">2026–2027 Eğitim-Öğretim Yılı</option><option value="2025-2026">2025–2026 Eğitim-Öğretim Yılı</option><option value="2027-2028">2027–2028 Eğitim-Öğretim Yılı</option><option value="all">Tüm zamanlar</option></select></label>
    <label>İlçe<select id="analysisDistrict"><option value="all">Tüm ilçeler</option></select></label>
    <button id="analysisExportBtn" type="button">↓ Ziyaret edilmeyenleri CSV indir</button>
+   <button id="analysisPdfBtn" type="button" title="Tarayıcının yazdırma ekranında PDF olarak kaydet">↓ PDF olarak kaydet</button>
   </div>
+  <div id="analysisPrintHeading" class="analysisPrintHeading"><h2>Niğde İl Millî Eğitim Müdürlüğü · Kurum Ziyaretleri Analiz Raporu</h2><p id="analysisPrintScope"></p></div>
   <div id="analysisStatus" class="analysisStatus">Ziyaret kayıtları yükleniyor…</div>
   <div class="analysisSummary">
    <div class="analysisKpi"><small>Toplam kurum</small><strong id="akTotal">—</strong></div>
@@ -169,10 +221,13 @@
   <div class="analysisColumns">
    <section class="analysisPanel"><h3>İlçelere göre ziyaret oranı</h3><p>Her kurum, ziyaret sayısı kaç olursa olsun bir kez sayılır.</p><div id="analysisDistrictBars"></div></section>
    <section class="analysisPanel"><h3>Aylara göre ziyaretler</h3><p>Seçili dönemde gerçekleşen ziyaret kayıtlarının aylık dağılımı.</p><div id="analysisMonthBars"></div></section>
-   <section class="analysisPanel analysisWide"><h3>Henüz ziyaret edilmeyen kurumlar</h3><p>Seçilen dönemde ziyaret kaydı bulunmayan kurumlar. İlçe filtresi uygulanır.</p><div id="analysisPendingTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Ziyaret edilen kurumlar <span id="analysisVisitedCount" class="analysisListCount"></span></h3><p>Seçilen dönemde en az bir kez ziyaret edilmiş kurumlar. Tekrar ziyaret sayıları ayrı gösterilir.</p><div id="analysisVisitedTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Ziyaret kayıtları · tarih ve ayrıntılar</h3><p>Her ziyaret ayrı satırda listelenir. Yöneticiye özel açıklamalar sadece yetkili girişinde gösterilir.</p><div id="analysisDetailTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Henüz ziyaret edilmeyen kurumlar <span id="analysisPendingCount" class="analysisListCount"></span></h3><p>Seçilen dönemde ziyaret kaydı bulunmayan kurumlar. İlçe filtresi uygulanır.</p><div id="analysisPendingTable" class="analysisTableWrap"></div></section>
   </div>
  </div>
 </section>
+<section id="schoolPrint" aria-label="Kurum PDF raporu"></section>
 <div id="shade" class="shade"><div class="modal"><div class="modalhead"><div><h2 id="mTitle">Kurum</h2><div id="mSubtitle" class="subtle"></div></div><button id="close" class="close" aria-label="Kapat">×</button></div><div class="modalcontent" id="modalBody"></div></div></div><div id="toast" class="toast"></div>
 <div id="loginShade" class="shade" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
   <div class="modal" style="width:min(430px,100%)">
@@ -494,6 +549,7 @@ const CODE_AL='23456789CFGHJMPQRVWX',STEPS=[20,1,.05,.0025,.000125];
 function decodePlus(str,district){let match=String(str).toUpperCase().match(/(^|[^A-Z0-9])([23456789CFGHJMPQRVWX]{4}\+[23456789CFGHJMPQRVWX]{2})(?![A-Z0-9])/);if(!match)return null;let code=match[2].replace('+',''),anchor=ANCHORS[district],x=anchor[0]+90,y=anchor[1]+180,prefix='';for(let s of STEPS.slice(0,2)){let a=Math.floor(x/s),b=Math.floor(y/s);prefix+=CODE_AL[a]+CODE_AL[b];x-=a*s;y-=b*s;}code=prefix+code;let lat=-90,lon=-180;for(let i=0;i<STEPS.length;i++){lat+=CODE_AL.indexOf(code[2*i])*STEPS[i];lon+=CODE_AL.indexOf(code[2*i+1])*STEPS[i]}lat+=.000125/2;lon+=.000125/2;while(lat-anchor[0]>.5)lat-=1;while(anchor[0]-lat>.5)lat+=1;while(lon-anchor[1]>.5)lon-=1;while(anchor[1]-lon>.5)lon+=1;return [Number(lat.toFixed(7)),Number(lon.toFixed(7))]}
 function openModal(code){let orig=BASE.find(x=>x.code===String(code));if(!orig)return;selectedCode=String(code);let r=info(orig),admin=$('admin').checked;let allVisits=(db.visits[r.code]||[]).slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));$('mTitle').textContent=r.name;$('mSubtitle').textContent=r.district+' · '+r.type+' · Kurum Kodu '+r.code;
 let body='<div class="warning"><b>Konum kontrolü:</b> '+esc(locationLabel(r))+' — İlçeyle uyumlu olması köy, belde veya mahallenin doğrulandığı anlamına gelmez.'+'</div><dl class="kv"><dt>Genel Müdürlük</dt><dd>'+esc(r.gm)+'</dd><dt>Kademe / statü</dt><dd>'+esc(r.level)+' · '+esc(r.ownership)+'</dd><dt>Öğrenci sayısı</dt><dd>'+numDisplay(r.studentCount)+'</dd><dt>Öğretmen sayısı</dt><dd>'+numDisplay(r.teacherCount)+'</dd><dt>Kurum müdürü</dt><dd>'+(admin?esc(r.director||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>İletişim numarası</dt><dd>'+(admin?esc(r.phone||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>Harita konumu</dt><dd>'+(isLocated(r)?Number(r.lat).toFixed(7)+', '+Number(r.lon).toFixed(7):'<span style="color:#ab791e">Konum doğrulanmadı</span>')+'</dd><dt>Plus Code / adres</dt><dd>'+esc(r.locationText||'—')+'</dd><dt>Konum kaynağı</dt><dd>'+esc(r.source||'—')+'</dd></dl>';
+body+='<div style="margin:12px 0"><button type="button" class="btnoutline" id="schoolPdfBtn">↓ Kurum PDF raporu</button></div>';
 body+='<div class="maplink"><a href="'+esc((r.locationText||'').startsWith('https://maps.')?r.locationText:(r.maps||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(r.name+' '+r.district+' Niğde'))))+'" target="_blank" rel="noopener noreferrer">Google Maps\'te kurumu ara ↗</a></div>';
 body+='<div class="modsection"><h3>Ziyaret geçmişi ('+allVisits.length+')</h3>'+(allVisits.length?allVisits.map(v=>'<div class="visitrow"><div><strong>'+esc(v.date)+'</strong><div style="font-size:12px;margin-top:3px;color:#4d6b85">'+esc(v.type||'Genel okul ziyareti')+'</div>'+(admin&&v.note?'<div style="font-size:12px;margin-top:5px"><strong>Açıklama:</strong> '+esc(v.note)+'</div>':'')+(admin?'<div style="font-size:12px;margin-top:5px;line-height:1.7">'+(v.participants?'<div><strong>Katılımcılar:</strong> '+esc(v.participants)+'</div>':'')+(v.eventName?'<div><strong>Etkinlik:</strong> '+esc(v.eventName)+'</div>':'')+(v.visitedClasses?'<div><strong>Ziyaret edilen sınıflar:</strong> '+esc(v.visitedClasses)+'</div>':'')+(v.giftGiven===true?'<div><strong>Hediye:</strong> Evet</div>':v.giftGiven===false?'<div><strong>Hediye:</strong> Hayır</div>':'')+(v.giftDescription?'<div><strong>Hediye açıklaması:</strong> '+esc(v.giftDescription)+'</div>':'')+'</div>':'')+'</div>'+(admin?'<button class="btn-danger" data-del="'+esc(v.id)+'">Sil</button>':'')+'</div>').join(''):'<div class="empty">Henüz ziyaret kaydı bulunmuyor.</div>')+'</div>';
 if(admin){if(mapSafe(r)){body+='<div class="modsection"><h3>Konum doğrulama</h3><div class="hint">Haritadaki noktanın doğru ilçe ve köy, belde veya mahallede olduğunu kontrol ettiysen onayla. Yerleşim girişinin tam noktasını bulmak zorunda değilsin.</div><button class="btnoutline" id="confirmLocation">'+(checkedLocation(r)?'✓ Yerleşim konumu onaylı':'✓ İlçe ve yerleşimi doğruladım')+'</button></div>'}body+='<div class="modsection"><h3>Yeni ziyaret kaydet</h3><div class="editgrid"><label>Ziyaret tarihi<input type="date" id="newDate" value="'+new Date().toISOString().slice(0,10)+'"></label><label>Ziyaret türü<select id="newType">'+VISIT_TYPES.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('')+'</select></label><label class="span2">Etkinlik adı (isteğe bağlı)<input id="newEventName" maxlength="200" placeholder="Örn. Öğretmenler Odası Buluşması"></label><div class="span2"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Katılımcılar (birden fazla seçilebilir)</div><div class="participant-list">'+PARTICIPANT_OPTIONS.map((x,i)=>'<label class="participant-option"><input type="checkbox" class="newParticipant" value="'+esc(x)+'" id="participant-'+i+'"><span>'+esc(x)+'</span></label>').join('')+'</div><label id="participantOtherWrap" style="display:none;margin-top:7px">Diğer katılımcı (isteğe bağlı)<input id="newParticipantOther" maxlength="300" placeholder="Unvan / görev"></label></div><label class="span2">Ziyaret edilen sınıflar (isteğe bağlı)<input id="newClasses" maxlength="300" placeholder="Örn. 5/A, 6/B, 8/C"></label><label>Hediye verildi mi?<select id="newGift"><option value="">Belirtilmedi</option><option value="true">Evet</option><option value="false">Hayır</option></select></label><label class="span2">Hediye açıklaması (isteğe bağlı)<input id="newGiftDescription" maxlength="500" placeholder="Örn. Öğrencilere kitap hediye edildi"></label><label class="span2">Açıklama (isteğe bağlı, kişisel bilgi yazmayın)<textarea id="newNote" rows="3" maxlength="2000" placeholder="Ziyaretle ilgili kısa not..."></textarea></label></div><button class="btnprimary" style="margin-top:10px" id="addVisit">Ziyareti kaydet</button></div>';
@@ -505,6 +561,7 @@ $('modalBody').innerHTML=body;const otherCheck=[...document.querySelectorAll('.n
 function closeModal(){$('shade').classList.remove('open');document.body.style.overflow='';selectedCode=null}
 async function modalAction(e){
  const t=e.target;
+ if(t.closest('#schoolPdfBtn')){printSchoolReport(selectedCode);return;}
  if(t.closest('#decode')){
    if(!isManager())return showToast('Yönetici girişi veya yerel deneme modu gerekli.');
    let r=BASE.find(x=>x.code===selectedCode),cc=decodePlus($('editLocText').value,r.district);
@@ -663,7 +720,7 @@ function showCloudStatus(text,kind=''){
  let e=$('cloudBanner');e.textContent=text;e.className='cloudbanner'+(kind?' '+kind:'');
 }
 function updateAuthUI(){
- const yes=isManager();$('admin').checked=yes;
+ const yes=isManager();document.body.classList.toggle('authorized-map-tools',yes);$('admin').checked=yes;
   $('demoWrap').hidden=cloud.enabled;
  $('export').hidden=!yes;
  $('loginBtn').textContent=localDemo()?'🧪 Yerel test açık':yes?'↪ Çıkış yap':'🔐 Yönetici girişi';
@@ -815,21 +872,46 @@ async function startupCloud(){
 }
 
 
+// Kurum raporu tarayıcının PDF/yazdırma özelliğini kullanır; sunucuya içerik göndermez.
+function printSchoolReport(code){
+ if(cloud.enabled&&!cloud.dataReady)return showToast('Kurum raporu için güncel kayıtların yüklenmesi gerekiyor.');
+ const original=BASE.find(x=>x.code===String(code));if(!original)return;
+ const s=info(original),authorized=isManager();
+ const rows=[['Kurum adı',s.name],['Kurum kodu',s.code],['İlçe',s.district],['Kurum türü',s.type],['Genel müdürlük',s.gm],['Kademe',s.level],['Resmî / Özel',s.ownership],['Pansiyonlu',s.boarding==='1'?'Evet':'Hayır'],['Öğrenci sayısı',s.studentCount??'Bilgi girilmedi'],['Öğretmen sayısı',s.teacherCount??'Bilgi girilmedi']];
+ if(authorized){rows.push(['Kurum müdürü',s.director||'Bilgi girilmedi'],['Kurum telefonu',s.phone||'Bilgi girilmedi']);}
+ rows.push(['Enlem / boylam',isLocated(s)?s.lat+', '+s.lon:'Koordinat bulunmuyor'],['Adres / Plus Code',s.locationText||'—'],['Konum kaynağı',s.source||'—']);
+ const visits=(db.visits[s.code]||[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+ let html='<h1>Niğde İl Millî Eğitim Müdürlüğü</h1><div class="reportSubtitle">Eğitim Kurumu Bilgi ve Ziyaret Raporu · '+esc(new Date().toLocaleDateString('tr-TR'))+'<div>'+ (authorized?'Yönetici raporu · Yetkili bilgiler içerir':'Herkese açık bilgiler')+'</div></div>';
+ html+='<h2>Kurum Bilgileri</h2><table><tbody>'+rows.map(([k,v])=>'<tr><th>'+esc(k)+'</th><td>'+esc(v)+'</td></tr>').join('')+'</tbody></table>';
+ html+='<h2>Ziyaret Geçmişi ('+visits.length+' kayıt)</h2>';
+ html+=visits.length?visits.map((v,i)=>{
+  const parts=[['Ziyaret türü',v.type||'Genel okul ziyareti']];
+  if(authorized){parts.push(['Katılımcılar',v.participants||'—'],['Etkinlik adı',v.eventName||'—'],['Ziyaret edilen sınıflar',v.visitedClasses||'—'],['Hediye verildi mi',v.giftGiven===true?'Evet':v.giftGiven===false?'Hayır':'Belirtilmedi'],['Hediye açıklaması',v.giftDescription||'—'],['Ziyaret açıklaması',v.note||'—']);}
+  return '<div class="schoolVisit"><strong>'+(i+1)+'. Ziyaret · '+esc((v.date||'').split('-').reverse().join('.'))+'</strong>'+parts.map(([k,val])=>'<p><b>'+esc(k)+':</b> '+esc(val)+'</p>').join('')+'</div>';
+ }).join(''):'<p>Bu kuruma ait ziyaret kaydı bulunmuyor.</p>';
+ $('schoolPrint').innerHTML=html;
+ document.body.classList.add('school-print');
+ window.print();
+}
+window.addEventListener('afterprint',()=>{document.body.classList.remove('school-print')});
+
 // Analiz yalnızca mevcut ziyaret kayıtlarını okur; hiçbir veri güncellemesi yapmaz.
-const analyticsState={list:[],pending:[]};
+const analyticsState={list:[],pending:[],visited:[]};
 function aVisitRecords(code,period){return (db.visits[code]||[]).filter(v=>period==='all'||yearOf(v.date)===period);}
 function aEscapeCsv(v){let str=String(v??'');return '"'+str.replace(/"/g,'""')+'"';}
 function analysisData(){
  const period=$('analysisPeriod').value,district=$('analysisDistrict').value;
  const list=BASE.filter(s=>district==='all'||s.district===district);
  const pending=list.filter(s=>aVisitRecords(s.code,period).length===0);
- const visited=list.length-pending.length;
+ const visitedList=list.filter(s=>aVisitRecords(s.code,period).length>0);
+ const visited=visitedList.length;
  const allVisits=list.flatMap(s=>aVisitRecords(s.code,period));
- return {period,district,list,pending,visited,allVisits};
+ return {period,district,list,pending,visited,visitedList,allVisits};
 }
 function analysisDraw(){
- const d=analysisData();analyticsState.list=d.list;analyticsState.pending=d.pending;
+ const d=analysisData();analyticsState.list=d.list;analyticsState.pending=d.pending;analyticsState.visited=d.visitedList;
  const ready=!cloud.enabled||cloud.dataReady;
+ $('analysisPrintScope').textContent='Dönem: '+(d.period==='all'?'Tüm zamanlar':d.period)+'  |  İlçe: '+(d.district==='all'?'Tüm ilçeler':d.district)+'  |  Rapor tarihi: '+new Date().toLocaleDateString('tr-TR');
  $('analysisStatus').textContent=ready?'Her kurum toplamda bir kez sayılır. Ziyaret kaydı sayısı, aynı kuruma yapılan tekrar ziyaretleri de içerir.':'Merkezî kayıtlar yükleniyor; sayılar henüz kesin değil.';
  for(const [id,value] of Object.entries({akTotal:d.list.length,akVisited:ready?d.visited:'…',akPending:ready?d.pending.length:'…',akRate:ready?(d.list.length?(100*d.visited/d.list.length).toLocaleString('tr-TR',{maximumFractionDigits:1})+'%':'—'):'…'}))$(id).textContent=value;
  $('akVisits').textContent='Toplam ziyaret kaydı: '+(ready?d.allVisits.length.toLocaleString('tr-TR'):'…');
@@ -850,14 +932,29 @@ function analysisDraw(){
   const title=new Date(Number(y),Number(m)-1,1).toLocaleDateString('tr-TR',{month:'short',year:'numeric'});
   return '<div class="analysisBarRow"><span>'+esc(title)+'</span><div class="analysisTrack"><div class="analysisFill analysisMonth" style="width:'+(100*value/max).toFixed(2)+'%"></div></div><span class="num">'+value+' ziyaret</span></div>';
  }).join('')||'<div class="analysisEmpty">Henüz ziyaret kaydı yok.</div>';
+ const sortSchools=(a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr');
+ $('analysisVisitedCount').textContent='('+d.visitedList.length+' kurum)';
+ $('analysisPendingCount').textContent='('+d.pending.length+' kurum)';
+ $('analysisVisitedTable').innerHTML=d.visitedList.length?'<table><thead><tr><th>Kurum kodu</th><th>Kurum adı</th><th>İlçe</th><th>Ziyaret sayısı</th><th>Son ziyaret tarihi</th></tr></thead><tbody>'+d.visitedList.slice().sort(sortSchools).map(s=>{const visits=aVisitRecords(s.code,d.period);const dates=visits.map(v=>v.date||'').filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();const last=dates.length?dates[dates.length-1].split('-').reverse().join('.'): '—';return '<tr><td>'+esc(s.code)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.district)+'</td><td>'+visits.length+'</td><td>'+esc(last)+'</td></tr>';}).join('')+'</tbody></table>':'<div class="analysisEmpty">Seçilen kapsamda ziyaret edilen kurum yok.</div>';
+  const detailRecords=d.visitedList.flatMap(s=>aVisitRecords(s.code,d.period).map(v=>({school:s,visit:v}))).sort((a,b)=>String(b.visit.date||'').localeCompare(String(a.visit.date||''))||a.school.name.localeCompare(b.school.name,'tr'));
+ const canSeeDetails=isManager();
+ $('analysisDetailTable').innerHTML=detailRecords.length?'<table><thead><tr><th>Kurum</th><th>İlçe</th><th>Tarih</th><th>Ziyaret türü</th>'+(canSeeDetails?'<th>Katılımcılar / etkinlik / sınıflar / hediye / açıklama</th>':'')+'</tr></thead><tbody>'+detailRecords.map(({school,visit:v})=>{
+  const extra=canSeeDetails?[v.participants?'Katılımcılar: '+v.participants:'',v.eventName?'Etkinlik: '+v.eventName:'',v.visitedClasses?'Sınıflar: '+v.visitedClasses:'',v.giftGiven===true?'Hediye: Evet':v.giftGiven===false?'Hediye: Hayır':'',v.giftDescription?'Hediye açıklaması: '+v.giftDescription:'',v.note?'Açıklama: '+v.note:''].filter(Boolean).map(esc).join('<div style="margin-bottom:5px"></div>'):'';
+  return '<tr><td>'+esc(school.name)+' ('+esc(school.code)+')</td><td>'+esc(school.district)+'</td><td>'+esc((v.date||'').split('-').reverse().join('.'))+'</td><td>'+esc(v.type||'Genel okul ziyareti')+'</td>'+(canSeeDetails?'<td>'+extra+'</td>':'')+'</tr>';
+ }).join('')+'</tbody></table>':'<div class="analysisEmpty">Ziyaret kaydı bulunmuyor.</div>';
  $('analysisPendingTable').innerHTML=d.pending.length?'<table><thead><tr><th>Kurum kodu</th><th>Kurum adı</th><th>İlçe</th><th>Kurum türü</th></tr></thead><tbody>'+d.pending.slice().sort((a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr')).map(s=>'<tr><td>'+esc(s.code)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.district)+'</td><td>'+esc(s.type)+'</td></tr>').join('')+'</tbody></table>':'<div class="analysisEmpty">Seçilen kapsamda ziyaret edilmeyen kurum yok.</div>';
- $('analysisExportBtn').disabled=!ready;
+ $('analysisExportBtn').disabled=!ready;$('analysisPdfBtn').disabled=!ready;
 }
 $('analysisDistrict').innerHTML='<option value="all">Tüm ilçeler</option>'+[...new Set(BASE.map(s=>s.district))].sort((a,b)=>a.localeCompare(b,'tr')).map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join('');
 $('analysisOpenBtn').addEventListener('click',()=>{ $('analysisPeriod').value=$('period').value; $('analysisOverlay').classList.add('open');analysisDraw();});
 $('analysisCloseBtn').addEventListener('click',()=>{$('analysisOverlay').classList.remove('open');});
 $('analysisPeriod').addEventListener('change',analysisDraw);
 $('analysisDistrict').addEventListener('change',analysisDraw);
+$('analysisPdfBtn').addEventListener('click',()=>{
+ if(cloud.enabled&&!cloud.dataReady)return showToast('Rapor için ziyaret verilerinin yüklenmesi gerekiyor.');
+ analysisDraw();
+ window.print(); // Yazdır penceresinde “PDF olarak kaydet” seçilebilir.
+});
 $('analysisExportBtn').addEventListener('click',()=>{
  if(cloud.enabled&&!cloud.dataReady)return showToast('Veriler yüklenmeden dışa aktarılmaz.');
  const rows=[['Kurum kodu','Kurum adı','İlçe','Kurum türü'],...analyticsState.pending.map(s=>[s.code,s.name,s.district,s.type])];
