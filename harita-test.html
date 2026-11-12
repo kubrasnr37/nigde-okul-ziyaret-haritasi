@@ -163,6 +163,19 @@ body.authorized-map-tools #roadStyle{display:inline-block!important}
  #schoolPrint .schoolVisit strong{font-size:11px}
  #schoolPrint .schoolVisit p{margin:3px 0;overflow-wrap:anywhere}
 }
+
+/* Analiz bolumleri icin ayri rapor butonlari */
+.analysisReportActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin:-3px 0 12px}
+.analysisReportActions button{background:#fff;border:1px solid #b9cfe0;border-radius:7px;color:#1e567f;padding:8px 12px;font-size:12px;font-weight:650}
+.analysisReportActions button:hover{background:#edf5fa}
+.analysisReportActions button:disabled{opacity:.45;cursor:not-allowed}
+@media print{
+ .analysisReportActions{display:none!important}
+ body.analysis-print-selected .analysisSummary{display:none!important}
+ body.analysis-print-selected .analysisPanel{display:none!important}
+ body.analysis-print-selected .analysisPanel.analysisPrintTarget{display:block!important}
+ body.analysis-print-selected .analysisPrintHeading{display:block!important}
+}
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
@@ -221,9 +234,9 @@ body.authorized-map-tools #roadStyle{display:inline-block!important}
   <div class="analysisColumns">
    <section class="analysisPanel"><h3>İlçelere göre ziyaret oranı</h3><p>Her kurum, ziyaret sayısı kaç olursa olsun bir kez sayılır.</p><div id="analysisDistrictBars"></div></section>
    <section class="analysisPanel"><h3>Aylara göre ziyaretler</h3><p>Seçili dönemde gerçekleşen ziyaret kayıtlarının aylık dağılımı.</p><div id="analysisMonthBars"></div></section>
-   <section class="analysisPanel analysisWide"><h3>Ziyaret edilen kurumlar <span id="analysisVisitedCount" class="analysisListCount"></span></h3><p>Seçilen dönemde en az bir kez ziyaret edilmiş kurumlar. Tekrar ziyaret sayıları ayrı gösterilir.</p><div id="analysisVisitedTable" class="analysisTableWrap"></div></section>
-   <section class="analysisPanel analysisWide"><h3>Ziyaret kayıtları · tarih ve ayrıntılar</h3><p>Her ziyaret ayrı satırda listelenir. Yöneticiye özel açıklamalar sadece yetkili girişinde gösterilir.</p><div id="analysisDetailTable" class="analysisTableWrap"></div></section>
-   <section class="analysisPanel analysisWide"><h3>Henüz ziyaret edilmeyen kurumlar <span id="analysisPendingCount" class="analysisListCount"></span></h3><p>Seçilen dönemde ziyaret kaydı bulunmayan kurumlar. İlçe filtresi uygulanır.</p><div id="analysisPendingTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Ziyaret edilen kurumlar <span id="analysisVisitedCount" class="analysisListCount"></span></h3><p>Seçilen dönemde en az bir kez ziyaret edilmiş kurumlar. Tekrar ziyaret sayıları ayrı gösterilir.</p><div class="analysisReportActions"><button type="button" data-report-csv="visited">↓ CSV indir</button><button type="button" data-report-pdf="visited">↓ PDF olarak kaydet</button></div><div id="analysisVisitedTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Ziyaret kayıtları · tarih ve ayrıntılar</h3><p>Her ziyaret ayrı satırda listelenir. Yöneticiye özel açıklamalar sadece yetkili girişinde gösterilir.</p><div class="analysisReportActions"><button type="button" data-report-csv="details">↓ CSV indir</button><button type="button" data-report-pdf="details">↓ PDF olarak kaydet</button></div><div id="analysisDetailTable" class="analysisTableWrap"></div></section>
+   <section class="analysisPanel analysisWide"><h3>Henüz ziyaret edilmeyen kurumlar <span id="analysisPendingCount" class="analysisListCount"></span></h3><p>Seçilen dönemde ziyaret kaydı bulunmayan kurumlar. İlçe filtresi uygulanır.</p><div class="analysisReportActions"><button type="button" data-report-csv="pending">↓ CSV indir</button><button type="button" data-report-pdf="pending">↓ PDF olarak kaydet</button></div><div id="analysisPendingTable" class="analysisTableWrap"></div></section>
   </div>
  </div>
 </section>
@@ -943,7 +956,7 @@ function analysisDraw(){
   return '<tr><td>'+esc(school.name)+' ('+esc(school.code)+')</td><td>'+esc(school.district)+'</td><td>'+esc((v.date||'').split('-').reverse().join('.'))+'</td><td>'+esc(v.type||'Genel okul ziyareti')+'</td>'+(canSeeDetails?'<td>'+extra+'</td>':'')+'</tr>';
  }).join('')+'</tbody></table>':'<div class="analysisEmpty">Ziyaret kaydı bulunmuyor.</div>';
  $('analysisPendingTable').innerHTML=d.pending.length?'<table><thead><tr><th>Kurum kodu</th><th>Kurum adı</th><th>İlçe</th><th>Kurum türü</th></tr></thead><tbody>'+d.pending.slice().sort((a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr')).map(s=>'<tr><td>'+esc(s.code)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.district)+'</td><td>'+esc(s.type)+'</td></tr>').join('')+'</tbody></table>':'<div class="analysisEmpty">Seçilen kapsamda ziyaret edilmeyen kurum yok.</div>';
- $('analysisExportBtn').disabled=!ready;$('analysisPdfBtn').disabled=!ready;
+ $('analysisExportBtn').disabled=!ready;$('analysisPdfBtn').disabled=!ready;document.querySelectorAll('.analysisReportActions button').forEach(b=>b.disabled=!ready);
 }
 $('analysisDistrict').innerHTML='<option value="all">Tüm ilçeler</option>'+[...new Set(BASE.map(s=>s.district))].sort((a,b)=>a.localeCompare(b,'tr')).map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join('');
 $('analysisOpenBtn').addEventListener('click',()=>{ $('analysisPeriod').value=$('period').value; $('analysisOverlay').classList.add('open');analysisDraw();});
@@ -961,6 +974,66 @@ $('analysisExportBtn').addEventListener('click',()=>{
  const csv='\ufeff'+rows.map(row=>row.map(aEscapeCsv).join(';')).join('\r\n');
  const a=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
  a.href=url;a.download='Nigde_Ziyaret_Edilmeyen_Kurumlar_'+$('analysisPeriod').value+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+});
+// Bolum bazli CSV ve PDF raporlari: aktif donem/ilce filtresi kullanilir.
+const sectionReports={
+ visited:{table:'analysisVisitedTable',title:'Ziyaret Edilen Kurumlar',file:'Ziyaret_Edilen_Kurumlar'},
+ pending:{table:'analysisPendingTable',title:'Ziyaret Edilmeyen Kurumlar',file:'Ziyaret_Edilmeyen_Kurumlar'},
+ details:{table:'analysisDetailTable',title:'Ziyaret Detaylari',file:'Ziyaret_Detaylari'}
+};
+function reportReady(){
+ if(cloud.enabled&&!cloud.dataReady){showToast('Rapor almak icin merkezi verilerin yuklenmesini bekleyin.');return false;}
+ return true;
+}
+function exportSectionCsv(kind){
+ if(!reportReady())return;
+ const d=analysisData();const schools=d.list.slice().sort((a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr'));
+ const authorized=isManager();let rows=[];
+ if(kind==='visited'){
+  rows=[['Kurum kodu','Kurum adi','Ilce','Kurum turu','Ziyaret sayisi','Son ziyaret tarihi']];
+  for(const s of schools){const visits=aVisitRecords(s.code,d.period);if(!visits.length)continue;
+   const dates=visits.map(v=>v.date||'').filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+   rows.push([s.code,s.name,s.district,s.type,visits.length,dates.length?dates[dates.length-1].split('-').reverse().join('.'):'']);
+  }
+ }else if(kind==='pending'){
+  rows=[['Kurum kodu','Kurum adi','Ilce','Kurum turu']];
+  for(const s of schools)if(!aVisitRecords(s.code,d.period).length)rows.push([s.code,s.name,s.district,s.type]);
+ }else if(kind==='details'){
+  rows=[['Kurum kodu','Kurum adi','Ilce','Ziyaret tarihi','Ziyaret turu']];
+  if(authorized)rows[0].push('Katilimcilar','Etkinlik adi','Ziyaret edilen siniflar','Hediye verildi mi','Hediye aciklamasi','Ziyaret aciklamasi');
+  const entries=schools.flatMap(s=>aVisitRecords(s.code,d.period).map(v=>({s,v}))).sort((a,b)=>String(b.v.date||'').localeCompare(String(a.v.date||''))||a.s.name.localeCompare(b.s.name,'tr'));
+  for(const {s,v} of entries){const row=[s.code,s.name,s.district,v.date||'',v.type||'Genel okul ziyareti'];
+   if(authorized)row.push(v.participants||'',v.eventName||'',v.visitedClasses||'',v.giftGiven===true?'Evet':v.giftGiven===false?'Hayir':'',v.giftDescription||'',v.note||'');
+   rows.push(row);
+  }
+ }else return;
+ // Excel CSV formulu enjeksiyonunu engelle: disaridan gelen metinleri veri olarak yaz.
+ const safeCsv=v=>{let x=String(v??'');if(/^[\s\u0000-\u001f]*[=+@\-]/.test(x)&&!/^\d{4}-\d{2}-\d{2}$/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"';};
+ const csv='\ufeff'+rows.map(r=>r.map(safeCsv).join(';')).join('\r\n');
+ const a=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+ const period=d.period==='all'?'Tum_Zamanlar':d.period;
+ const district=d.district==='all'?'Tum_Ilceler':d.district.replace(/[^\p{L}\p{N}]+/gu,'_');
+ a.href=url;a.download='Nigde_'+sectionReports[kind].file+'_'+period+'_'+district+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function printSection(kind){
+ if(!sectionReports[kind]||!reportReady())return;
+ analysisDraw();
+ const title=$('analysisPrintHeading').querySelector('h2');
+ title.textContent='Niğde İl Millî Eğitim Müdürlüğü · '+sectionReports[kind].title;
+ document.querySelectorAll('.analysisPrintTarget').forEach(el=>el.classList.remove('analysisPrintTarget'));
+ $(sectionReports[kind].table).closest('.analysisPanel').classList.add('analysisPrintTarget');
+ document.body.classList.add('analysis-print-selected');
+ window.print();
+}
+function resetSectionPrint(){
+ document.body.classList.remove('analysis-print-selected');
+ document.querySelectorAll('.analysisPrintTarget').forEach(el=>el.classList.remove('analysisPrintTarget'));
+ $('analysisPrintHeading').querySelector('h2').textContent='Niğde İl Millî Eğitim Müdürlüğü · Kurum Ziyaretleri Analiz Raporu';
+}
+window.addEventListener('afterprint',resetSectionPrint);
+$('analysisOverlay').addEventListener('click',e=>{
+ const pdf=e.target.closest('[data-report-pdf]');if(pdf){printSection(pdf.dataset.reportPdf);return;}
+ const csv=e.target.closest('[data-report-csv]');if(csv)exportSectionCsv(csv.dataset.reportCsv);
 });
 const originalAnalysisRender=render;
 render=function(){originalAnalysisRender();if($('analysisOverlay').classList.contains('open'))analysisDraw();};
