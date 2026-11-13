@@ -176,10 +176,82 @@ body.authorized-map-tools #roadStyle{display:inline-block!important}
  body.analysis-print-selected .analysisPanel.analysisPrintTarget{display:block!important}
  body.analysis-print-selected .analysisPrintHeading{display:block!important}
 }
+
+/* Mobil uyumluluk: yalnızca görünüm ve navigasyon; veri ve yetkiler değişmez. */
+#mobileFilterToggle{display:none}
+@media(max-width:880px){
+ html,body{max-width:100%;overflow-x:hidden}
+ .top{gap:10px;padding:12px 14px}
+ .brand{min-width:0;gap:10px}.brand>div:last-child{min-width:0}
+ .brand h1{font-size:17px;line-height:1.25;overflow-wrap:anywhere}
+ .logo{width:38px;height:38px;flex:0 0 38px}
+ .hcontrols{gap:7px;align-items:stretch}
+ .hcontrols .headerbtn,.hcontrols .pill{min-height:42px;display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;font-size:12px}
+ .hcontrols #analysisOpenBtn{order:-1;background:#e2a061;color:#1b3048;border-color:#e2a061;font-weight:700}
+ #filterSidebar{padding:10px 12px;overflow:visible;max-height:none}
+ #filterSidebar .sidehead{margin:0}
+ #mobileFilterToggle{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 12px}
+ #mobileFilterContents{display:none;padding-top:13px}
+ #filterSidebar.mobile-expanded #mobileFilterContents{display:block}
+ #filterSidebar .field select,#filterSidebar .field input{font-size:16px;min-height:44px}
+ .main{padding:12px 10px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+ .stat{padding:11px;min-width:0}.stat strong{font-size:24px}.stat small{line-height:1.3}
+ .mapbar{padding:11px;gap:10px}.mapbar h2{font-size:16px;line-height:1.25}
+ .mapbuttons{display:flex;width:100%;gap:6px;flex-wrap:wrap}
+ .mapbuttons button,.mapbuttons select{min-height:40px;font-size:12px;padding:8px 9px}
+ #map{height:52svh;min-height:360px;max-height:580px;touch-action:pan-y}
+ #map.street-active{touch-action:auto}
+ .mapnote{padding:9px 11px;font-size:11px}
+ .twosections{display:block}.twosections>*+*{margin-top:13px}
+ .tablebox .scroll{max-height:390px;overflow-x:auto}
+ .tablebox table{min-width:650px}
+ .modal{max-height:calc(100dvh - 20px);width:100%;border-radius:12px}
+ .shade{padding:10px;align-items:center}
+ .modalhead{padding:14px 14px 11px}.modalcontent{padding:15px}
+ .modalhead h2{font-size:18px;overflow-wrap:anywhere}
+ .editgrid{grid-template-columns:1fr;gap:10px}
+ .editgrid .span2{grid-column:1}
+ .editgrid input,.editgrid textarea,.editgrid select{font-size:16px;min-height:44px}
+ .kv{grid-template-columns:minmax(92px,37%) minmax(0,1fr);gap:7px 9px}
+ .visitrow{flex-wrap:wrap}
+ #analysisOverlay{overscroll-behavior:contain}
+ .analysisTop{padding:12px 13px;gap:10px;align-items:flex-start}
+ .analysisTop h2{font-size:18px;line-height:1.25}
+ .analysisTop button{min-height:42px;padding:9px 12px}
+ .analysisMain{padding:14px 10px 30px}
+ .analysisFilters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+ .analysisFilters label{min-width:0}
+ .analysisFilters select{width:100%;min-width:0;min-height:44px;font-size:16px}
+ .analysisFilters button{min-height:43px;white-space:normal}
+ .analysisSummary{gap:8px;margin-bottom:12px}
+ .analysisKpi{padding:11px}.analysisKpi strong{font-size:23px}.analysisKpi small{font-size:11px}
+ .analysisColumns{gap:12px}.analysisPanel{padding:12px}
+ .analysisPanel h3{font-size:16px}
+ .analysisTableWrap{max-height:400px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .analysisTableWrap table{min-width:560px}
+ .analysisReportActions{justify-content:flex-start;margin:0 0 12px;gap:7px}
+ .analysisReportActions button{flex:1;min-height:43px;min-width:120px;padding:9px}
+ .analysisBarRow{grid-template-columns:80px minmax(0,1fr) 76px;gap:6px;font-size:11px}
+ .districtColorLegend{max-width:174px;right:6px}
+ .leaflet-popup-content{min-width:0;max-width:235px}
+}
+@media(max-width:430px){
+ .top h1{font-size:15px}.top small{font-size:11px}
+ .hcontrols .headerbtn,.hcontrols .pill{font-size:11px}
+ .stats{gap:7px}.stat{padding:10px}.stat strong{font-size:22px}
+ .analysisFilters{grid-template-columns:1fr 1fr}
+ .analysisFilters button{grid-column:auto}
+ .analysisTop{position:sticky;top:0}
+ .analysisBarRow{grid-template-columns:70px minmax(0,1fr) 70px}
+ #map{height:50svh;min-height:330px}
+}
+@media print{#mobileFilterToggle{display:none!important}}
+
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
-<div id="cloudBanner" role="status" class="cloudbanner">Çevrimiçi bağlantı henüz yapılandırılmadı. “Yerel deneme modu” ile yeni alanları test edebilirsiniz; bu kayıtlar başka cihazlarda görünmez.</div><div class="layout"><aside><div class="sidehead"><h2>Arama ve filtreleme</h2><button id="reset" class="smallbtn">Temizle</button></div>
+<div id="cloudBanner" role="status" class="cloudbanner">Çevrimiçi bağlantı henüz yapılandırılmadı. “Yerel deneme modu” ile yeni alanları test edebilirsiniz; bu kayıtlar başka cihazlarda görünmez.</div><div class="layout"><aside id="filterSidebar"><div class="sidehead"><h2>Arama ve filtreleme</h2><button id="mobileFilterToggle" type="button" class="smallbtn" aria-controls="mobileFilterContents" aria-expanded="false">Filtreleri aç ▾</button><button id="reset" class="smallbtn">Temizle</button></div><div id="mobileFilterContents">
 <div class="field"><label>Kurum adı veya kodu</label><input type="search" id="search" placeholder="Kurum ara..."></div>
 <div class="field"><label>İlçe</label><select id="district"></select></div>
 <div class="field"><label>Genel Müdürlük</label><select id="gm"></select></div>
@@ -196,7 +268,7 @@ body.authorized-map-tools #roadStyle{display:inline-block!important}
 <div class="notebox"><b>Aynı adreste birden fazla kurum</b><div style="margin-top:5px">Haritadaki sayılı işarete tıkla; aynı binadaki okulları ayrı ayrı seçip ziyaret kaydı ekleyebilirsin.</div></div>
 <div class="notebox"><b>Gerçek sokak haritası</b><div style="margin-top:5px">İlçeler sokak haritası üzerinde uzaktan %50, ilçe düzeyinde %25 opaklıkta pastel renklerle ayrılır; okul düzeyinde dolgu kaybolur. Altı ilçenin <strong>OpenStreetMap idari sınırları</strong> bu HTML dosyasına gömülüdür. Bunlar resmî onaylı kadastro sınırları değildir. Okul işaretleri Plus Code hesaplarına dayanır; ilçe, belde, köy ve mahalle bilgilerini ayrıca kontrol edin. Harita zemini MapTiler üzerinden yüklenir. İlçe sınırları ve okul koordinatları mevcut sistemden alınır.</div></div>
 <div class="notebox"><b>Veri kaynağı</b><div style="margin-top:5px">İlk kurum listesi: 3 Kasım 2026 tarihli <i>konumlar_2.xlsx</i>. Eksik konumlar için 11 Kasım 2026 tarihinde Google Maps üzerinden paylaşılan yeni koordinatlar eklendi. Kısa Plus Code konumları ilçe merkezi referansıyla çözülmüştür; harita sağlayıcısı üzerinden bağımsız doğrulama yapılmamıştır. Google Maps kısa bağlantıları doğrudan koordinat olarak kullanılmaz.</div></div>
-</aside><main class="main"><div class="stats"><div class="stat"><small>Filtrelenen kurum</small><strong id="stAll">340</strong></div><div class="stat"><small>Ziyaret edilen</small><strong id="stVisited" class="green">0</strong></div><div class="stat"><small>Ziyaret edilmeyen</small><strong id="stPending" class="red">340</strong></div><div class="stat"><small>Koordinatlı kurum</small><strong id="stLocated">277</strong></div><div class="stat"><small>Haritada gösterilen kurum</small><strong id="stPoints">340</strong></div><div class="stat"><small>Toplam öğrenci</small><strong id="stStudents">—</strong><small id="stStudentsCoverage">Veri bekleniyor</small></div><div class="stat"><small>Toplam öğretmen</small><strong id="stTeachers">—</strong><small id="stTeachersCoverage">Veri bekleniyor</small></div></div>
+</div></aside><main class="main"><div class="stats"><div class="stat"><small>Filtrelenen kurum</small><strong id="stAll">340</strong></div><div class="stat"><small>Ziyaret edilen</small><strong id="stVisited" class="green">0</strong></div><div class="stat"><small>Ziyaret edilmeyen</small><strong id="stPending" class="red">340</strong></div><div class="stat"><small>Koordinatlı kurum</small><strong id="stLocated">277</strong></div><div class="stat"><small>Haritada gösterilen kurum</small><strong id="stPoints">340</strong></div><div class="stat"><small>Toplam öğrenci</small><strong id="stStudents">—</strong><small id="stStudentsCoverage">Veri bekleniyor</small></div><div class="stat"><small>Toplam öğretmen</small><strong id="stTeachers">—</strong><small id="stTeachersCoverage">Veri bekleniyor</small></div></div>
 <section class="mapbox"><div class="mapbar"><h2>Niğde Eğitim Kurumları Ziyaret Haritası <small style="font:500 11px Segoe UI,Arial;color:#7790a4;margin-left:7px">Sokak haritası</small></h2><div class="mapbuttons"><button id="basemap" title="Şematik ilçe renk alanlarını göster/gizle">▧ Turuncu bölgeleri gizle</button><button id="fit">↗ Konumlara odaklan</button><button id="boundaries">▧ İlçe renklerini gizle</button><button id="boundaryFileBtn" title="Resmî veya doğrulanmış sınır dosyanı içe aktar">⬆ Gerçek sınır GeoJSON yükle</button><input type="file" id="boundaryFile" accept=".geojson,.json,application/json" hidden><button id="roadsFileBtn" title="Gerçek yol çizgilerini içeren GeoJSON dosyasını içe aktar">＋ Yol katmanı yükle</button><input type="file" id="roadsFile" accept=".geojson,.json,application/json" hidden><select id="roadStyle" class="roadSelect" title="Yol çizgisi kalınlığı" aria-label="Yol çizgisi kalınlığı" disabled><option value="0.65">Yollar · çok ince</option><option value="1" selected>Yollar · ince</option><option value="1.35">Yollar · orta</option></select><button id="csv">↓ Görünenleri CSV indir</button></div></div><div id="map" aria-label="Kurumların gerçek koordinatlarında gösterildiği çevrimdışı harita">
   <div id="streetMap" aria-label="MapTiler sokak haritası"></div>
   <div id="mapTilerSetup" style="display:none;position:absolute;z-index:1000;top:65px;left:50%;transform:translateX(-50%);width:min(440px,90%);padding:17px;background:#fff;border:1px solid #b5c8db;border-radius:12px;box-shadow:0 4px 22px #13263b40;font:14px Segoe UI,Arial">
@@ -1040,4 +1112,16 @@ render=function(){originalAnalysisRender();if($('analysisOverlay').classList.con
 
 initMap();
 startupCloud();
+
+// Mobil filtreler başlangıçta kapalı; masaüstü görünümü değişmez.
+(function(){
+ const b=document.getElementById('mobileFilterToggle');
+ const panel=document.getElementById('filterSidebar');
+ if(!b||!panel)return;
+ b.addEventListener('click',function(){
+  const open=panel.classList.toggle('mobile-expanded');
+  b.setAttribute('aria-expanded',String(open));
+  b.textContent=open?'Filtreleri kapat ▴':'Filtreleri aç ▾';
+ });
+})();
 </script></body></html>
