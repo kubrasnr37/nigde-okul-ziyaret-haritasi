@@ -80,6 +80,24 @@
 .editgrid label.participant-option input[type="checkbox"]{appearance:auto;-webkit-appearance:checkbox;display:block;flex:0 0 16px;width:16px!important;min-width:16px;max-width:16px;height:16px!important;min-height:16px;margin:0!important;padding:0!important;border:0;box-shadow:none;accent-color:#1e567f;}
 .editgrid label.participant-option span{display:block;flex:1;text-align:left;line-height:1.4;white-space:normal;}
 
+/* Harita görünümünü sadeleştir; CSV sadece yetkili yöneticiye açık. */
+#basemap,#boundaries{display:none!important}
+#csv{display:none!important}
+body.authorized-map-tools #csv{display:inline-block!important}
+.visit-history{display:flex;flex-direction:column;gap:8px}
+.visit-entry{border:1px solid #dce5ee;border-radius:9px;background:#fff;overflow:hidden}
+.visit-entry>summary{cursor:pointer;list-style:none;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;font-weight:650;color:#1b3048}
+.visit-entry>summary::-webkit-details-marker{display:none}
+.visit-entry>summary:after{content:'⌄';font-size:19px;color:#62758b;flex-shrink:0}
+.visit-entry[open]>summary:after{content:'⌃'}
+.visit-entry[open]>summary{background:#f3f7fb;border-bottom:1px solid #e0e8f1}
+.visit-entry-content{padding:12px 13px;font-size:12px;line-height:1.7}
+.visit-entry-actions{display:flex;gap:9px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.visit-entry .visit-edit-form{margin-top:12px;padding:12px;background:#f7fafd;border:1px solid #dfe8f1;border-radius:9px}
+.visit-entry .visit-edit-form[hidden]{display:none!important}
+.visit-edit-form .editgrid{margin-top:9px}
+.visit-edit-form .editgrid label{display:block}
+.visit-edit-form .editgrid input,.visit-edit-form .editgrid select,.visit-edit-form .editgrid textarea{min-width:0}
 /* Veri katmanı yükleme araçları yalnızca yetkililer içindir. */
 #boundaryFileBtn,#roadsFileBtn,#roadStyle{display:none!important}
 body.authorized-map-tools #boundaryFileBtn,body.authorized-map-tools #roadsFileBtn{display:inline-block!important}
@@ -367,7 +385,7 @@ function locationStatus(r){if(!isLocated(r))return 'missing';if(!inOwnDistrict(r
 function mapSafe(r){return locationStatus(r)==='district'||locationStatus(r)==='verified'}
 function locationLabel(r){let st=locationStatus(r);return st==='verified'?'Yerleşim onaylandı':st==='district'?'İlçeyle uyumlu':st==='outside'?'İlçe uyuşmuyor':'Konum eksik'}
 
-function opts(id,key,all='Tümü') {let select=$(id);let vals=[...new Set(BASE.map(r=>r[key]).filter(v=>v!==''))].sort((a,b)=>String(a).localeCompare(String(b),'tr'));select.innerHTML='<option value="all">'+all+'</option>'+vals.map(v=>'<option value="'+esc(v)+'">'+esc(v=== '1'?'Evet':v==='0'?'Hayır':v)+'</option>').join('')}
+function opts(id,key,all='Tümü') {let select=$(id);let vals=[...new Set(BASE.map(r=>r[key]).filter(v=>v!==''))].sort((a,b)=>String(a).localeCompare(String(b),'tr'));select.innerHTML='<option value="all">'+all+'</option>'+vals.map(v=>'<option value="'+esc(v)+'">'+esc(v=== '1'?'Evet':v==='0'?'Hayır':(id==='level'&&v==='Diğer'?'BİLSEM':v))+'</option>').join('')}
 for(let k of ['district','gm','type','level','ownership','boarding'])opts(k,k);
 $('visitTypeFilter').innerHTML='<option value="all">Tüm ziyaret türleri</option>'+VISIT_TYPES.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('');
 function filtered(){let query=$('search').value.toLocaleLowerCase('tr').trim();return BASE.map(info).filter(r=>['district','gm','type','level','ownership','boarding'].every(k=>$(k).value==='all'||r[k]===$(k).value)).filter(r=>!query||(r.name+' '+r.code+' '+r.director+' '+r.phone).toLocaleLowerCase('tr').includes(query)).filter(r=>$('status').value==='all'||($('status').value==='visited')===isVisited(r)).filter(r=>$('located').value==='all'||($('located').value==='yes')===mapSafe(r)).filter(r=>$('visitTypeFilter').value==='all'||(db.visits[r.code]||[]).some(v=>(v.type||'Genel okul ziyareti')===$('visitTypeFilter').value&&($('period').value==='all'||yearOf(v.date)===$('period').value)))}
@@ -632,11 +650,55 @@ function loadBoundaries(){cycleBasemap()}
 const PARTICIPANT_OPTIONS=['Vali','Belediye Başkanı','Cumhuriyet Başsavcısı','Rektör','Vali Yardımcısı','İlçe Kaymakamı','İl Emniyet Müdürü','İl Jandarma Komutanı','İlçe/Belde Belediye Başkanı','Diğer'];
 const CODE_AL='23456789CFGHJMPQRVWX',STEPS=[20,1,.05,.0025,.000125];
 function decodePlus(str,district){let match=String(str).toUpperCase().match(/(^|[^A-Z0-9])([23456789CFGHJMPQRVWX]{4}\+[23456789CFGHJMPQRVWX]{2})(?![A-Z0-9])/);if(!match)return null;let code=match[2].replace('+',''),anchor=ANCHORS[district],x=anchor[0]+90,y=anchor[1]+180,prefix='';for(let s of STEPS.slice(0,2)){let a=Math.floor(x/s),b=Math.floor(y/s);prefix+=CODE_AL[a]+CODE_AL[b];x-=a*s;y-=b*s;}code=prefix+code;let lat=-90,lon=-180;for(let i=0;i<STEPS.length;i++){lat+=CODE_AL.indexOf(code[2*i])*STEPS[i];lon+=CODE_AL.indexOf(code[2*i+1])*STEPS[i]}lat+=.000125/2;lon+=.000125/2;while(lat-anchor[0]>.5)lat-=1;while(anchor[0]-lat>.5)lat+=1;while(lon-anchor[1]>.5)lon-=1;while(anchor[1]-lon>.5)lon+=1;return [Number(lat.toFixed(7)),Number(lon.toFixed(7))]}
+function visitHistoryHTML(v,admin){
+  // Ziyaret tarih ve türü başlıkta, geri kalan bilgiler yalnızca açıldığında görünür.
+  let name=esc(v.eventName||v.type||'Genel okul ziyareti');
+  let detail='<div><strong>Ziyaret türü:</strong> '+name+'</div>';
+  if(admin){
+    if(v.note)detail+='<div><strong>Açıklama:</strong> '+esc(v.note)+'</div>';
+    if(v.participants)detail+='<div><strong>Katılımcılar:</strong> '+esc(v.participants)+'</div>';
+    if(v.eventName)detail+='<div><strong>Etkinlik:</strong> '+esc(v.eventName)+'</div>';
+    if(v.visitedClasses)detail+='<div><strong>Ziyaret edilen sınıflar:</strong> '+esc(v.visitedClasses)+'</div>';
+    if(v.giftGiven===true)detail+='<div><strong>Hediye:</strong> Evet</div>';
+    if(v.giftGiven===false)detail+='<div><strong>Hediye:</strong> Hayır</div>';
+    if(v.giftDescription)detail+='<div><strong>Hediye açıklaması:</strong> '+esc(v.giftDescription)+'</div>';
+    detail+='<div class="visit-entry-actions"><button type="button" class="btnoutline" data-edit="'+esc(v.id)+'">Düzenle</button><button type="button" class="btn-danger" data-del="'+esc(v.id)+'">Sil</button></div>';
+    detail+='<div class="visit-edit-form" data-edit-form="'+esc(v.id)+'" hidden></div>';
+  }
+  return '<details class="visit-entry"><summary><span>'+esc(v.date)+' · '+name+'</span></summary><div class="visit-entry-content">'+detail+'</div></details>';
+}
+function visitEditFormHTML(v){
+ const types=VISIT_TYPES.includes(v.type)?VISIT_TYPES:[v.type||'Genel okul ziyareti',...VISIT_TYPES];
+ const participants=String(v.participants||'');
+ const entries=participants.split(',').map(x=>x.trim()).filter(Boolean);
+ const other=entries.find(x=>x.startsWith('Diğer:'))||'';
+ const checked=PARTICIPANT_OPTIONS.map((name,i)=>'<label class="participant-option"><input type="checkbox" class="editParticipant" value="'+esc(name)+'" '+(entries.includes(name)||(name==='Diğer'&&!!other)?'checked':'')+'><span>'+esc(name)+'</span></label>').join('');
+ let gift=v.giftGiven===null||v.giftGiven===undefined?'':String(v.giftGiven);
+ return '<b>Ziyaret kaydını düzenle</b><div class="editgrid">'
+ +'<label>Ziyaret tarihi<input type="date" data-ef="date" value="'+esc(v.date)+'"></label>'
+ +'<label>Ziyaret türü<select data-ef="type">'+types.map(t=>'<option value="'+esc(t)+'" '+(t===v.type?'selected':'')+'>'+esc(t)+'</option>').join('')+'</select></label>'
+ +'<label class="span2">Etkinlik adı<input data-ef="event" maxlength="200" value="'+esc(v.eventName||'')+'"></label>'
+ +'<div class="span2"><b>Katılımcılar</b><div class="participant-list">'+checked+'</div><label>Diğer katılımcı<input data-ef="other" maxlength="300" value="'+esc(other.replace(/^Diğer:\s*/,''))+'"></label></div>'
+ +'<label class="span2">Ziyaret edilen sınıflar<input data-ef="classes" maxlength="300" value="'+esc(v.visitedClasses||'')+'"></label>'
+ +'<label>Hediye verildi mi?<select data-ef="gift"><option value="" '+(gift===''?'selected':'')+'>Belirtilmedi</option><option value="true" '+(gift==='true'?'selected':'')+'>Evet</option><option value="false" '+(gift==='false'?'selected':'')+'>Hayır</option></select></label>'
+ +'<label class="span2">Hediye açıklaması<input data-ef="giftDescription" maxlength="500" value="'+esc(v.giftDescription||'')+'"></label>'
+ +'<label class="span2">Açıklama<textarea data-ef="note" maxlength="2000" rows="3">'+esc(v.note||'')+'</textarea></label>'
+ +'</div><div class="visit-entry-actions"><button type="button" class="btnprimary" data-save-edit="'+esc(v.id)+'">Değişiklikleri kaydet</button><button type="button" class="btnoutline" data-cancel-edit="'+esc(v.id)+'">Vazgeç</button></div>';
+}
+function readVisitEditForm(form){
+ const get=k=>form.querySelector('[data-ef="'+k+'"]')?.value?.trim()||'';
+ const date=get('date'),type=get('type');
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!yearOf(date))throw Error('Geçerli bir ziyaret tarihi seçiniz.');
+ if(!type)throw Error('Ziyaret türünü seçiniz.');
+ let participants=[...form.querySelectorAll('.editParticipant:checked')].map(x=>x.value);
+ if(participants.includes('Diğer')){participants=participants.filter(x=>x!=='Diğer');participants.push(get('other')?'Diğer: '+get('other'):'Diğer')}
+ return {date,type,note:get('note'),eventName:get('event'),visitedClasses:get('classes'),giftGiven:get('gift')===''?null:get('gift')==='true',giftDescription:get('giftDescription'),participants:participants.join(', ')};
+}
 function openModal(code){let orig=BASE.find(x=>x.code===String(code));if(!orig)return;selectedCode=String(code);let r=info(orig),admin=$('admin').checked;let allVisits=(db.visits[r.code]||[]).slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));$('mTitle').textContent=r.name;$('mSubtitle').textContent=r.district+' · '+r.type+' · Kurum Kodu '+r.code;
 let body='<div class="warning"><b>Konum kontrolü:</b> '+esc(locationLabel(r))+' — İlçeyle uyumlu olması köy, belde veya mahallenin doğrulandığı anlamına gelmez.'+'</div><dl class="kv"><dt>Genel Müdürlük</dt><dd>'+esc(r.gm)+'</dd><dt>Kademe / statü</dt><dd>'+esc(r.level)+' · '+esc(r.ownership)+'</dd><dt>Öğrenci sayısı</dt><dd>'+numDisplay(r.studentCount)+'</dd><dt>Öğretmen sayısı</dt><dd>'+numDisplay(r.teacherCount)+'</dd><dt>Kurum müdürü</dt><dd>'+(admin?esc(r.director||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>İletişim numarası</dt><dd>'+(admin?esc(r.phone||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>Harita konumu</dt><dd>'+(isLocated(r)?Number(r.lat).toFixed(7)+', '+Number(r.lon).toFixed(7):'<span style="color:#ab791e">Konum doğrulanmadı</span>')+'</dd><dt>Plus Code / adres</dt><dd>'+esc(r.locationText||'—')+'</dd><dt>Konum kaynağı</dt><dd>'+esc(r.source||'—')+'</dd></dl>';
 body+='<div style="margin:12px 0"><button type="button" class="btnoutline" id="schoolPdfBtn">↓ Kurum PDF raporu</button></div>';
 body+='<div class="maplink"><a href="'+esc((r.locationText||'').startsWith('https://maps.')?r.locationText:(r.maps||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(r.name+' '+r.district+' Niğde'))))+'" target="_blank" rel="noopener noreferrer">Google Maps\'te kurumu ara ↗</a></div>';
-body+='<div class="modsection"><h3>Ziyaret geçmişi ('+allVisits.length+')</h3>'+(allVisits.length?allVisits.map(v=>'<div class="visitrow"><div><strong>'+esc(v.date)+'</strong><div style="font-size:12px;margin-top:3px;color:#4d6b85">'+esc(v.type||'Genel okul ziyareti')+'</div>'+(admin&&v.note?'<div style="font-size:12px;margin-top:5px"><strong>Açıklama:</strong> '+esc(v.note)+'</div>':'')+(admin?'<div style="font-size:12px;margin-top:5px;line-height:1.7">'+(v.participants?'<div><strong>Katılımcılar:</strong> '+esc(v.participants)+'</div>':'')+(v.eventName?'<div><strong>Etkinlik:</strong> '+esc(v.eventName)+'</div>':'')+(v.visitedClasses?'<div><strong>Ziyaret edilen sınıflar:</strong> '+esc(v.visitedClasses)+'</div>':'')+(v.giftGiven===true?'<div><strong>Hediye:</strong> Evet</div>':v.giftGiven===false?'<div><strong>Hediye:</strong> Hayır</div>':'')+(v.giftDescription?'<div><strong>Hediye açıklaması:</strong> '+esc(v.giftDescription)+'</div>':'')+'</div>':'')+'</div>'+(admin?'<button class="btn-danger" data-del="'+esc(v.id)+'">Sil</button>':'')+'</div>').join(''):'<div class="empty">Henüz ziyaret kaydı bulunmuyor.</div>')+'</div>';
+body+='<div class="modsection"><h3>Ziyaret geçmişi ('+allVisits.length+')</h3><div class="visit-history">'+(allVisits.length?allVisits.map(v=>visitHistoryHTML(v,admin)).join(''):'<div class="empty">Henüz ziyaret kaydı bulunmuyor.</div>')+'</div></div>';
 if(admin){if(mapSafe(r)){body+='<div class="modsection"><h3>Konum doğrulama</h3><div class="hint">Haritadaki noktanın doğru ilçe ve köy, belde veya mahallede olduğunu kontrol ettiysen onayla. Yerleşim girişinin tam noktasını bulmak zorunda değilsin.</div><button class="btnoutline" id="confirmLocation">'+(checkedLocation(r)?'✓ Yerleşim konumu onaylı':'✓ İlçe ve yerleşimi doğruladım')+'</button></div>'}body+='<div class="modsection"><h3>Yeni ziyaret kaydet</h3><div class="editgrid"><label>Ziyaret tarihi<input type="date" id="newDate" value="'+new Date().toISOString().slice(0,10)+'"></label><label>Ziyaret türü<select id="newType">'+VISIT_TYPES.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('')+'</select></label><label class="span2">Etkinlik adı (isteğe bağlı)<input id="newEventName" maxlength="200" placeholder="Örn. Öğretmenler Odası Buluşması"></label><div class="span2"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Katılımcılar (birden fazla seçilebilir)</div><div class="participant-list">'+PARTICIPANT_OPTIONS.map((x,i)=>'<label class="participant-option"><input type="checkbox" class="newParticipant" value="'+esc(x)+'" id="participant-'+i+'"><span>'+esc(x)+'</span></label>').join('')+'</div><label id="participantOtherWrap" style="display:none;margin-top:7px">Diğer katılımcı (isteğe bağlı)<input id="newParticipantOther" maxlength="300" placeholder="Unvan / görev"></label></div><label class="span2">Ziyaret edilen sınıflar (isteğe bağlı)<input id="newClasses" maxlength="300" placeholder="Örn. 5/A, 6/B, 8/C"></label><label>Hediye verildi mi?<select id="newGift"><option value="">Belirtilmedi</option><option value="true">Evet</option><option value="false">Hayır</option></select></label><label class="span2">Hediye açıklaması (isteğe bağlı)<input id="newGiftDescription" maxlength="500" placeholder="Örn. Öğrencilere kitap hediye edildi"></label><label class="span2">Açıklama (isteğe bağlı, kişisel bilgi yazmayın)<textarea id="newNote" rows="3" maxlength="2000" placeholder="Ziyaretle ilgili kısa not..."></textarea></label></div><button class="btnprimary" style="margin-top:10px" id="addVisit">Ziyareti kaydet</button></div>';
 body+='<div class="modsection"><h3>Müdür ve iletişim bilgilerini düzenle</h3><div class="editgrid"><label>Müdür adı soyadı<input id="editDirector" value="'+esc(r.director)+'"></label><label>Telefon numarası<input id="editPhone" value="'+esc(r.phone)+'"></label></div><button id="saveContact" class="btnoutline" style="margin-top:10px">Bilgileri kaydet</button></div>';
 body+='<div class="modsection"><h3>Öğrenci ve öğretmen sayılarını güncelle</h3><div class="editgrid"><label>Toplam öğrenci sayısı<input type="number" id="editStudentCount" min="0" max="1000000" step="1" value="'+(r.studentCount??'')+'" placeholder="Veri girilmedi"></label><label>Toplam öğretmen sayısı<input type="number" id="editTeacherCount" min="0" max="1000000" step="1" value="'+(r.teacherCount??'')+'" placeholder="Veri girilmedi"></label></div><div class="hint" style="margin-top:7px">Boş alan “bilgi yok” anlamına gelir; 0 gerçek sıfır değeridir. Yalnızca toplam sayılar tutulur.</div><button id="saveCounts" class="btnoutline" style="margin-top:10px">Sayıları kaydet</button></div>';
@@ -647,13 +709,25 @@ function closeModal(){$('shade').classList.remove('open');document.body.style.ov
 async function modalAction(e){
  const t=e.target;
  if(t.closest('#schoolPdfBtn')){printSchoolReport(selectedCode);return;}
+ if(t.closest('[data-edit]')){
+   if(!isManager())return showToast('Yalnızca yetkili yönetici düzenleyebilir.');
+   const id=t.closest('[data-edit]').dataset.edit;
+   const v=(db.visits[selectedCode]||[]).find(x=>String(x.id)===id);
+   const form=t.closest('.visit-entry-content')?.querySelector('[data-edit-form]');
+   if(!v||!form)return showToast('Ziyaret kaydı bulunamadı.');
+   form.innerHTML=visitEditFormHTML(v);form.hidden=false;t.hidden=true;return;
+ }
+ if(t.closest('[data-cancel-edit]')){
+   const form=t.closest('.visit-edit-form');form.hidden=true;form.innerHTML='';
+   const button=form.closest('.visit-entry-content').querySelector('[data-edit]');if(button)button.hidden=false;return;
+ }
  if(t.closest('#decode')){
    if(!isManager())return showToast('Yönetici girişi veya yerel deneme modu gerekli.');
    let r=BASE.find(x=>x.code===selectedCode),cc=decodePlus($('editLocText').value,r.district);
    if(!cc)return showToast('Geçerli bir kısa Plus Code bulunamadı.');
    $('editLat').value=cc[0];$('editLon').value=cc[1];showToast('Koordinatlar hesaplandı; kontrol edip kaydet.');return;
  }
- const target=t.closest('#confirmLocation,#addVisit,#saveContact,#saveCounts,#saveLocation,[data-del]');
+ const target=t.closest('#confirmLocation,#addVisit,#saveContact,#saveCounts,#saveLocation,[data-del],[data-save-edit]');
  if(!target)return;
  if(!isManager())return showToast('Yönetici girişi veya yerel deneme modu gerekli.');
  target.disabled=true;
@@ -679,12 +753,21 @@ async function modalAction(e){
      has=!!(a&&b);lat=has?Number(a):null;lon=has?Number(b):null;
      if(has&&(!Number.isFinite(lat)||!Number.isFinite(lon)||lat<36||lat>39||lon<33||lon>36))throw Error('Niğde çevresinde geçerli bir koordinat girin.');
    }
+   let editVisitId=null,edited=null;
+   if(t.closest('[data-save-edit]')){
+     editVisitId=t.closest('[data-save-edit]').dataset.saveEdit;
+     const v=(db.visits[code]||[]).find(x=>String(x.id)===editVisitId);
+     if(!v)throw Error('Düzenlenecek ziyaret kaydı bulunamadı.');
+     edited=readVisitEditForm(t.closest('.visit-edit-form'));
+   }
    if(isLocal){
      if(t.closest('#confirmLocation')){
        let r=info(BASE.find(x=>x.code===code));if(!mapSafe(r))throw Error('Konum kayıtlı ilçe içinde değil; önce düzeltin.');
        db.locReviews[code]={lat:Number(r.lat),lon:Number(r.lon),verifiedAt:new Date().toISOString()};
      }else if(t.closest('#addVisit')){
        (db.visits[code]??=[]).push({id:'demo-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),date,createdAt:new Date().toISOString(),type:visitType,note,participants,eventName,visitedClasses,giftGiven,giftDescription});
+     }else if(edited){
+       const v=(db.visits[code]||[]).find(x=>String(x.id)===editVisitId);Object.assign(v,edited);
      }else if(t.closest('#saveContact')){
        db.contacts[code]={director:$('editDirector').value.trim(),phone:$('editPhone').value.trim()};
      }else if(t.closest('#saveCounts')){
@@ -724,6 +807,22 @@ async function modalAction(e){
          throw Error('Açıklama kaydedilemedi; ziyaret kaydı geri alındı. '+detailError.message);
        }
      }
+   }else if(edited){
+     // Aynı kayıt üzerinde güncelle: yeni ziyaret oluşturulmaz.
+     // Detay tablosu yöneticilere özeldir. Eski kayıtta detay satırı yoksa UPSERT oluşturur.
+     // İki REST çağrısı atomik değildir; ayrıntı hatasında uyarı verilir.
+     const id=encodeURIComponent(editVisitId);
+     await cloudWrite('visits?id=eq.'+id,'PATCH',{
+       visit_date:edited.date,academic_year:yearOf(edited.date),visit_type:edited.type,participants:edited.participants||null
+     },{'Prefer':'return=minimal'});
+     try{
+       await cloudWrite('visit_details?on_conflict=visit_id','POST',{
+         visit_id:editVisitId,description:edited.note||null,event_name:edited.eventName||null,
+         visited_classes:edited.visitedClasses||null,gift_given:edited.giftGiven,gift_description:edited.giftDescription||null
+       },{'Prefer':'resolution=merge-duplicates,return=minimal'});
+     }catch(detailError){
+       throw Error('Ziyaret tarihi/türü kaydedildi ancak özel detaylar güncellenemedi. Kaydı yenileyip kontrol edin: '+detailError.message);
+     }
    }else if(t.closest('#saveContact')){
      await cloudWrite('school_contacts?on_conflict=school_id','POST',{school_id:code,director_name:$('editDirector').value.trim(),phone:$('editPhone').value.trim()},{'Prefer':'resolution=merge-duplicates,return=minimal'});
    }else if(t.closest('#saveCounts')){
@@ -741,6 +840,7 @@ async function modalAction(e){
 function download(name,content,type){let a=document.createElement('a');let blob=new Blob([content],{type});a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function csvCell(s){return '"'+String(s??'').replace(/"/g,'""')+'"'}
 function downloadCsv(){
+ if(!isManager())return showToast('CSV yalnızca yetkili yöneticiye açıktır.');
  let rows=filtered(),manager=isManager();
  let head=['Kurum Kodu','Kurum Adı','İlçe','Genel Müdürlük','Kurum Türü','Kademe','Resmi / Özel','Öğrenci Sayısı','Öğretmen Sayısı','Enlem','Boylam','Google Maps Konum Bilgisi','Seçili Dönemde Ziyaret','Tüm Ziyaret Sayısı'];
  if(manager)head.splice(9,0,'Müdür','Telefon');
