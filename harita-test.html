@@ -95,7 +95,7 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
 .analysisFilters{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:0 0 18px}
 .analysisFilters label{font-size:12px;color:#607489;font-weight:700;display:flex;flex-direction:column;gap:5px}
 .analysisFilters select{border:1px solid #cedae6;background:white;border-radius:8px;padding:9px;min-width:190px;color:#1b3048}
-.analysisSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.analysisSummary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
 .analysisKpi,.analysisPanel{border:1px solid #dce5ee;border-radius:12px;background:white;box-shadow:0 7px 26px rgba(23,45,68,.045)}
 .analysisKpi{padding:16px}
 .analysisKpi small{color:#68798d;display:block;font-size:12px}
@@ -130,7 +130,7 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
  .analysisPrintHeading h2{font:700 17px 'Palatino Linotype',Georgia,serif;margin:0 0 6px}
  .analysisPrintHeading p{font-size:10px;color:#555;margin:0}
  .analysisMain{padding:0!important;max-width:none!important;margin:0!important}
- .analysisSummary{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+ .analysisSummary{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important}
  .analysisKpi{padding:9px!important;break-inside:avoid;box-shadow:none!important}
  .analysisKpi strong{font-size:22px!important}
  .analysisKpi small{font-size:9px!important}
@@ -147,6 +147,7 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
  .analysisBarRow{break-inside:avoid}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+@media (min-width:761px) and (max-width:1100px){.analysisSummary{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.analysisColumns{grid-template-columns:1fr}.analysisSummary{grid-template-columns:repeat(2,minmax(0,1fr))}.analysisBarRow{grid-template-columns:78px minmax(0,1fr) 72px}.analysisTop h2{font-size:18px}}
 /* Kurum PDF raporu ayrı yazdırma görünümüdür. */
 #schoolPrint{display:none}
@@ -236,8 +237,9 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
   <div class="analysisSummary">
    <div class="analysisKpi"><small>Toplam kurum</small><strong id="akTotal">—</strong></div>
    <div class="analysisKpi"><small>Ziyaret edilen kurum</small><strong class="green" id="akVisited">—</strong></div>
+   <div class="analysisKpi"><small>Toplam ziyaret kaydı</small><strong id="akVisits">—</strong></div>
    <div class="analysisKpi"><small>Ziyaret edilmeyen kurum</small><strong class="red" id="akPending">—</strong></div>
-   <div class="analysisKpi"><small>Ziyaret oranı</small><strong id="akRate">—</strong><small id="akVisits">Ziyaret kaydı: —</small></div>
+   <div class="analysisKpi"><small>Ziyaret oranı</small><strong id="akRate">—</strong></div>
   </div>
   <div class="analysisColumns">
    <section class="analysisPanel"><h3>İlçelere göre ziyaret oranı</h3><p>Her kurum, ziyaret sayısı kaç olursa olsun bir kez sayılır.</p><div id="analysisDistrictBars"></div></section>
@@ -956,7 +958,7 @@ function analysisDraw(){
  $('analysisPrintScope').textContent='Dönem: '+(d.period==='all'?'Tüm zamanlar':d.period)+'  |  İlçe: '+(d.district==='all'?'Tüm ilçeler':d.district)+'  |  Rapor tarihi: '+new Date().toLocaleDateString('tr-TR');
  $('analysisStatus').textContent=ready?'Her kurum toplamda bir kez sayılır. Ziyaret kaydı sayısı, aynı kuruma yapılan tekrar ziyaretleri de içerir.':'Merkezî kayıtlar yükleniyor; sayılar henüz kesin değil.';
  for(const [id,value] of Object.entries({akTotal:d.list.length,akVisited:ready?d.visited:'…',akPending:ready?d.pending.length:'…',akRate:ready?(d.list.length?(100*d.visited/d.list.length).toLocaleString('tr-TR',{maximumFractionDigits:1})+'%':'—'):'…'}))$(id).textContent=value;
- $('akVisits').textContent='Toplam ziyaret kaydı: '+(ready?d.allVisits.length.toLocaleString('tr-TR'):'…');
+ $('akVisits').textContent=ready?d.allVisits.length.toLocaleString('tr-TR'):'…';
  const districts=[...new Set(d.list.map(s=>s.district))].sort((a,b)=>a.localeCompare(b,'tr'));
  $('analysisDistrictBars').innerHTML=districts.map(name=>{
   const schools=d.list.filter(s=>s.district===name),done=schools.filter(s=>aVisitRecords(s.code,d.period).length).length;
