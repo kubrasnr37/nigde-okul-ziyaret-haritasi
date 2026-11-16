@@ -266,12 +266,6 @@ body.authorized-map-tools #roadStyle{display:inline-block!important}
 }
 @media print{#mobileFilterToggle{display:none!important}}
 
-
-/* Öğrenci/öğretmen sayıları yalnızca yönetici oturumunda görüntülenir. */
-body:not(.authorized-map-tools) .manager-count-only{display:none!important}
-body:not(.authorized-map-tools) .stats{grid-template-columns:repeat(5,minmax(0,1fr))}
-@media(max-width:1200px){body:not(.authorized-map-tools) .stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:880px){body:not(.authorized-map-tools) .stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
@@ -292,7 +286,7 @@ body:not(.authorized-map-tools) .stats{grid-template-columns:repeat(5,minmax(0,1
 <div class="notebox"><b>Aynı adreste birden fazla kurum</b><div style="margin-top:5px">Haritadaki sayılı işarete tıkla; aynı binadaki okulları ayrı ayrı seçip ziyaret kaydı ekleyebilirsin.</div></div>
 <div class="notebox"><b>Gerçek sokak haritası</b><div style="margin-top:5px">İlçeler sokak haritası üzerinde uzaktan %50, ilçe düzeyinde %25 opaklıkta pastel renklerle ayrılır; okul düzeyinde dolgu kaybolur. Altı ilçenin <strong>OpenStreetMap idari sınırları</strong> bu HTML dosyasına gömülüdür. Bunlar resmî onaylı kadastro sınırları değildir. Okul işaretleri Plus Code hesaplarına dayanır; ilçe, belde, köy ve mahalle bilgilerini ayrıca kontrol edin. Harita zemini MapTiler üzerinden yüklenir. İlçe sınırları ve okul koordinatları mevcut sistemden alınır.</div></div>
 <div class="notebox"><b>Veri kaynağı</b><div style="margin-top:5px">İlk kurum listesi: 3 Kasım 2026 tarihli <i>konumlar_2.xlsx</i>. Eksik konumlar için 11 Kasım 2026 tarihinde Google Maps üzerinden paylaşılan yeni koordinatlar eklendi. Kısa Plus Code konumları ilçe merkezi referansıyla çözülmüştür; harita sağlayıcısı üzerinden bağımsız doğrulama yapılmamıştır. Google Maps kısa bağlantıları doğrudan koordinat olarak kullanılmaz.</div></div>
-</div></aside><main class="main"><div class="stats"><div class="stat"><small>Filtrelenen kurum</small><strong id="stAll">340</strong></div><div class="stat"><small>Ziyaret edilen</small><strong id="stVisited" class="green">0</strong></div><div class="stat"><small>Ziyaret edilmeyen</small><strong id="stPending" class="red">340</strong></div><div class="stat"><small>Koordinatlı kurum</small><strong id="stLocated">277</strong></div><div class="stat"><small>Haritada gösterilen kurum</small><strong id="stPoints">340</strong></div><div class="stat manager-count-only"><small>Toplam öğrenci</small><strong id="stStudents">—</strong><small id="stStudentsCoverage">Veri bekleniyor</small></div><div class="stat manager-count-only"><small>Toplam öğretmen</small><strong id="stTeachers">—</strong><small id="stTeachersCoverage">Veri bekleniyor</small></div></div>
+</div></aside><main class="main"><div class="stats"><div class="stat"><small>Filtrelenen kurum</small><strong id="stAll">340</strong></div><div class="stat"><small>Ziyaret edilen</small><strong id="stVisited" class="green">0</strong></div><div class="stat"><small>Ziyaret edilmeyen</small><strong id="stPending" class="red">340</strong></div><div class="stat"><small>Koordinatlı kurum</small><strong id="stLocated">277</strong></div><div class="stat"><small>Haritada gösterilen kurum</small><strong id="stPoints">340</strong></div><div class="stat"><small>Toplam öğrenci</small><strong id="stStudents">—</strong><small id="stStudentsCoverage">Veri bekleniyor</small></div><div class="stat"><small>Toplam öğretmen</small><strong id="stTeachers">—</strong><small id="stTeachersCoverage">Veri bekleniyor</small></div></div>
 <section class="mapbox"><div class="mapbar"><h2>Niğde Eğitim Kurumları Ziyaret Haritası <small style="font:500 11px Segoe UI,Arial;color:#7790a4;margin-left:7px">Sokak haritası</small></h2><div class="mapbuttons"><button id="basemap" title="Şematik ilçe renk alanlarını göster/gizle">▧ Turuncu bölgeleri gizle</button><button id="fit">↗ Genel Görünüm</button><button id="boundaries">▧ İlçe renklerini gizle</button><button id="boundaryFileBtn" title="Resmî veya doğrulanmış sınır dosyanı içe aktar">⬆ Gerçek sınır GeoJSON yükle</button><input type="file" id="boundaryFile" accept=".geojson,.json,application/json" hidden><button id="roadsFileBtn" title="Gerçek yol çizgilerini içeren GeoJSON dosyasını içe aktar">＋ Yol katmanı yükle</button><input type="file" id="roadsFile" accept=".geojson,.json,application/json" hidden><select id="roadStyle" class="roadSelect" title="Yol çizgisi kalınlığı" aria-label="Yol çizgisi kalınlığı" disabled><option value="0.65">Yollar · çok ince</option><option value="1" selected>Yollar · ince</option><option value="1.35">Yollar · orta</option></select><button id="csv">↓ Görünenleri CSV indir</button></div></div><div id="map" aria-label="Kurumların gerçek koordinatlarında gösterildiği çevrimdışı harita">
   <div id="streetMap" aria-label="MapTiler sokak haritası"></div>
   <div id="mapTilerSetup" style="display:none;position:absolute;z-index:1000;top:65px;left:50%;transform:translateX(-50%);width:min(440px,90%);padding:17px;background:#fff;border:1px solid #b5c8db;border-radius:12px;box-shadow:0 4px 22px #13263b40;font:14px Segoe UI,Arial">
@@ -307,7 +301,7 @@ body:not(.authorized-map-tools) .stats{grid-template-columns:repeat(5,minmax(0,1
   <div id="districtColorLegend" class="districtColorLegend"></div>
   <div class="offlineBottomNote" id="geoAccuracy">Gerçek OpenStreetMap ilçe sınırları · Turuncu tema · Çevrimdışı</div>
 </div><div class="mapnote"><span id="mapstate">Gerçek ilçe sınırları turuncu tonlarda gösteriliyor. Yol katmanı isteğe bağlıdır.</span><span>Eksik veya ilçe dışındaki okul noktaları gösterilmez; bina konumları yönetici tarafından ayrıca onaylanabilir.</span></div></section>
-<div class="twosections"><section class="tablebox"><div class="thead"><h2>Kurum listesi</h2><small id="listCount" class="muted">340 kurum</small></div><div class="scroll"><table><thead><tr><th>Kurum adı</th><th>İlçe</th><th>Tür</th><th class="manager-count-only">Öğrenci / Öğretmen</th><th>Konum</th><th>Ziyaret</th></tr></thead><tbody id="rows"></tbody></table></div></section><section class="rightcard"><div class="sidecardhead"><h2>Konum kontrolü gerekiyor</h2><div class="muted" style="font-size:12px;margin-top:3px">Konumu eksik ya da ilçe uyuşmazlığı olan</div></div><div id="missing"></div></section></div></main></div>
+<div class="twosections"><section class="tablebox"><div class="thead"><h2>Kurum listesi</h2><small id="listCount" class="muted">340 kurum</small></div><div class="scroll"><table><thead><tr><th>Kurum adı</th><th>İlçe</th><th>Tür</th><th>Öğrenci / Öğretmen</th><th>Konum</th><th>Ziyaret</th></tr></thead><tbody id="rows"></tbody></table></div></section><section class="rightcard"><div class="sidecardhead"><h2>Konum kontrolü gerekiyor</h2><div class="muted" style="font-size:12px;margin-top:3px">Konumu eksik ya da ilçe uyuşmazlığı olan</div></div><div id="missing"></div></section></div></main></div>
 <footer class="foot">Sürüm 9: Öğrenci/öğretmen toplamları ve ziyaret türü eklendi. Boş sayısal alanlar 0 kabul edilmez. Yerel deneme modu gerçek yetkilendirme değildir. Niğde ilçe sınırları OpenStreetMap katkıcılarından alınmıştır (ODbL); resmî idari referans yerine geçmez. Çevrimiçi sürümün kayıt ve yönetici yetkileri Supabase bağlantısı ve güvenli RLS kuralları kurulduğunda etkinleşir. Kayıtlar otomatik olarak bu HTML dosyasında saklanmaz.</footer>
 
 <section id="analysisOverlay" role="dialog" aria-modal="true" aria-label="Ziyaret analizi">
@@ -360,7 +354,7 @@ const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':
 const KEYS=['district','gm','type','level','ownership','boarding','period','status','visitTypeFilter','located','search'];
 const VISIT_TYPES=['Eğitim-öğretim faaliyetlerini inceleme','Öğrenci/öğretmen buluşması','Proje / etkinlik ziyareti','Fiziki şartların incelenmesi','Açılış / tören','Diğer'];
 const LOCAL_DEMO_KEY='nigde-v9-yerel-deneme-verileri';
-const numDisplay=v=>Number.isInteger(v)&&v>=0?v.toLocaleString('tr-TR'):'—';
+const numDisplay=v=>Number.isInteger(v)&&v>=0?v.toLocaleString('tr-TR'):'Bilgi Bulunmamaktadır.';
 const validCount=v=>v===''||v===null||v===undefined?null:(/^\d+$/.test(String(v).trim())&&Number(v)<=1000000?Number(v):NaN);
 function localDemo(){return !cloud.enabled && $('demoMode').checked}
 function saveLocalDemo(){try{localStorage.setItem(LOCAL_DEMO_KEY,JSON.stringify(db));}catch(e){showToast('Tarayıcı kaydı yapılamadı: yedek almayı unutmayın.')}}
@@ -373,7 +367,7 @@ let tileLayer=null,onlineBasemap=true,tileErrorCount=0,tileSuccessCount=0,tileTi
 const ANCHORS={"MERKEZ":[37.965,34.678],"BOR":[37.888,34.558],"ÇAMARDI":[37.843,34.985],"ÇİFTLİK":[38.173,34.487],"ALTUNHİSAR":[38.005,34.374],"ULUKIŞLA":[37.546,34.487]};
 function showToast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2800)}
 function save(){render()} // Kalıcı kayıtlar yalnızca çevrimiçi API üzerinden yazılır.
-function info(r){let u=db.contacts[r.code]||{},co=db.coords[r.code]||{},ct=db.counts[r.code]||{};return {...r,director:u.director!==undefined?u.director:r.director,phone:u.phone!==undefined?u.phone:r.phone,studentCount:ct.studentCount!==undefined?ct.studentCount:(r.studentCount??null),teacherCount:ct.teacherCount!==undefined?ct.teacherCount:(r.teacherCount??null),lat:co.lat!==undefined?co.lat:r.lat,lon:co.lon!==undefined?co.lon:r.lon,locationText:co.locationText!==undefined?co.locationText:r.locationText,source:co.source||r.source}}
+function info(r){let u=db.contacts[r.code]||{},co=db.coords[r.code]||{},ct=db.counts[r.code]||{};return {...r,director:u.director!==undefined?u.director:r.director,phone:u.phone!==undefined?u.phone:r.phone,studentCount:isManager()?(ct.studentCount??null):null,teacherCount:isManager()?(ct.teacherCount??null):null,classroomCount:isManager()?(ct.classroomCount??null):null,statusNote:r.statusNote||(r.code==='712586'?'Kapandı.':''),lat:co.lat!==undefined?co.lat:r.lat,lon:co.lon!==undefined?co.lon:r.lon,locationText:co.locationText!==undefined?co.locationText:r.locationText,source:co.source||r.source}}
 function yearOf(date){let d=new Date(date+'T00:00:00');if(Number.isNaN(d.getTime()))return '';let y=d.getFullYear();return (d.getMonth()>=8?y:y-1)+'-'+(d.getMonth()>=8?y+1:y)}
 function isVisited(r){let list=db.visits[r.code]||[],p=$('period').value;return list.some(x=>p==='all'||yearOf(x.date)===p)}
 function isLocated(r){return Number.isFinite(Number(r.lat))&&Number.isFinite(Number(r.lon))&&r.lat!==null&&r.lon!==null&&Math.abs(r.lat)<=90&&Math.abs(r.lon)<=180}
@@ -400,11 +394,11 @@ function cssStatus(r){return isVisited(r)?'green':'red'}
 function render(){let list=filtered(),gp=groups(list);$('stAll').textContent=list.length;$('stVisited').textContent=cloud.enabled&&!cloud.dataReady?'…':list.filter(isVisited).length;$('stPending').textContent=cloud.enabled&&!cloud.dataReady?'…':list.filter(r=>!isVisited(r)).length;$('stLocated').textContent=list.filter(mapSafe).length;$('stPoints').textContent=gp.reduce((sum,g)=>sum+g.members.length,0);$('listCount').textContent=list.length+' kurum';
  const withStudents=list.filter(r=>Number.isInteger(r.studentCount)&&r.studentCount>=0);
  const withTeachers=list.filter(r=>Number.isInteger(r.teacherCount)&&r.teacherCount>=0);
- $('stStudents').textContent=withStudents.length?withStudents.reduce((n,r)=>n+r.studentCount,0).toLocaleString('tr-TR'):'—';
- $('stTeachers').textContent=withTeachers.length?withTeachers.reduce((n,r)=>n+r.teacherCount,0).toLocaleString('tr-TR'):'—';
- $('stStudentsCoverage').textContent=withStudents.length+'/'+list.length+' kurumda veri';
- $('stTeachersCoverage').textContent=withTeachers.length+'/'+list.length+' kurumda veri';
-$('rows').innerHTML=list.map(r=>'<tr><td class="school"><button data-open="'+esc(r.code)+'">'+esc(r.name)+'</button><div class="muted" style="font-size:10px">'+esc(r.code)+'</div></td><td>'+esc(r.district)+'</td><td>'+esc(r.type)+'</td><td class="manager-count-only"><span class="muted">'+numDisplay(r.studentCount)+' / '+numDisplay(r.teacherCount)+'</span></td><td><span class="tag '+(mapSafe(r)?'green':'amber')+'">'+locationLabel(r)+'</span></td><td><span class="tag '+cssStatus(r)+'">'+(isVisited(r)?'Ziyaret edildi':'Ziyaret edilmedi')+'</span></td></tr>').join('')||'<tr><td colspan="6" class="muted">Seçilen filtrelere uyan kurum bulunamadı.</td></tr>';
+ $('stStudents').textContent=!isManager()?'—':withStudents.length?withStudents.reduce((n,r)=>n+r.studentCount,0).toLocaleString('tr-TR'):'—';
+ $('stTeachers').textContent=!isManager()?'—':withTeachers.length?withTeachers.reduce((n,r)=>n+r.teacherCount,0).toLocaleString('tr-TR'):'—';
+ $('stStudentsCoverage').textContent=isManager()?withStudents.length+'/'+list.length+' kurumda veri':'Yalnızca yöneticiler';
+ $('stTeachersCoverage').textContent=isManager()?withTeachers.length+'/'+list.length+' kurumda veri':'Yalnızca yöneticiler';
+$('rows').innerHTML=list.map(r=>'<tr><td class="school"><button data-open="'+esc(r.code)+'">'+esc(r.name)+'</button><div class="muted" style="font-size:10px">'+esc(r.code)+'</div></td><td>'+esc(r.district)+'</td><td>'+esc(r.type)+'</td><td><span class="muted">'+(isManager()?numDisplay(r.studentCount)+' / '+numDisplay(r.teacherCount):'Yalnızca yetkili yöneticiler')+'</span></td><td><span class="tag '+(mapSafe(r)?'green':'amber')+'">'+locationLabel(r)+'</span></td><td><span class="tag '+cssStatus(r)+'">'+(isVisited(r)?'Ziyaret edildi':'Ziyaret edilmedi')+'</span></td></tr>').join('')||'<tr><td colspan="6" class="muted">Seçilen filtrelere uyan kurum bulunamadı.</td></tr>';
 let missing=list.filter(r=>!mapSafe(r));$('missing').innerHTML=missing.map(r=>'<div class="penditem"><b>'+esc(r.name)+'</b><small>'+esc(locationLabel(r))+' · '+esc(r.locationText||'Konum bilgisi yok')+'</small><button class="textbtn" data-open="'+esc(r.code)+'">Bilgiyi aç / konum gir</button></div>').join('')||'<div class="empty" style="padding:14px">Filtrede koordinatı eksik kurum yok.</div>';
 activeMapGroups=gp;drawMap(gp);}
 function dot(g){let v=g.members.filter(isVisited).length,all=g.members.length;return v===all?'done':v===0?'pending':'mix'}
@@ -701,15 +695,15 @@ function readVisitEditForm(form){
  return {date,type,note:get('note'),eventName:get('event'),visitedClasses:get('classes'),giftGiven:get('gift')===''?null:get('gift')==='true',giftDescription:get('giftDescription'),participants:participants.join(', ')};
 }
 function openModal(code){let orig=BASE.find(x=>x.code===String(code));if(!orig)return;selectedCode=String(code);let r=info(orig),admin=$('admin').checked;let allVisits=(db.visits[r.code]||[]).slice().sort((a,b)=>b.date.localeCompare(a.date)||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));$('mTitle').textContent=r.name;$('mSubtitle').textContent=r.district+' · '+r.type+' · Kurum Kodu '+r.code;
-let body='<dl class="kv"><dt>Genel Müdürlük</dt><dd>'+esc(r.gm)+'</dd><dt>Kademe / statü</dt><dd>'+esc(r.level)+' · '+esc(r.ownership)+'</dd><dt>Öğrenci sayısı</dt><dd>'+numDisplay(r.studentCount)+'</dd><dt>Öğretmen sayısı</dt><dd>'+numDisplay(r.teacherCount)+'</dd><dt>Kurum müdürü</dt><dd>'+(admin?esc(r.director||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>İletişim numarası</dt><dd>'+(admin?esc(r.phone||'Bilgi girilmedi'):'Yalnızca yetkili yöneticiler')+'</dd><dt>Harita konumu</dt><dd>'+(isLocated(r)?Number(r.lat).toFixed(7)+', '+Number(r.lon).toFixed(7):'<span style="color:#ab791e">Konum doğrulanmadı</span>')+'</dd><dt>Plus Code / adres</dt><dd>'+esc(r.locationText||'—')+'</dd><dt>Konum kaynağı</dt><dd>'+esc(r.source||'—')+'</dd></dl>';
+let body=(r.statusNote?'<div class="warning"><b>Kurum durumu:</b> '+esc(r.statusNote)+'</div>':'')+'<div class="warning"><b>Konum kontrolü:</b> '+esc(locationLabel(r))+' — İlçeyle uyumlu olması köy, belde veya mahallenin doğrulandığı anlamına gelmez.'+'</div><dl class="kv"><dt>Genel Müdürlük</dt><dd>'+esc(r.gm)+'</dd><dt>Kademe / statü</dt><dd>'+esc(r.level)+' · '+esc(r.ownership)+'</dd><dt>Öğrenci sayısı</dt><dd>'+(admin?numDisplay(r.studentCount):'Yalnızca yetkili yöneticiler')+'</dd><dt>Öğretmen sayısı</dt><dd>'+(admin?numDisplay(r.teacherCount):'Yalnızca yetkili yöneticiler')+'</dd><dt>Derslik sayısı</dt><dd>'+(admin?numDisplay(r.classroomCount):'Yalnızca yetkili yöneticiler')+'</dd><dt>Kurum müdürü</dt><dd>'+(admin?esc(r.director||'Bilgi Bulunmamaktadır.'):'Yalnızca yetkili yöneticiler')+'</dd><dt>İletişim numarası</dt><dd>'+(admin?esc(r.phone||'Bilgi Bulunmamaktadır.'):'Yalnızca yetkili yöneticiler')+'</dd><dt>Harita konumu</dt><dd>'+(isLocated(r)?Number(r.lat).toFixed(7)+', '+Number(r.lon).toFixed(7):'<span style="color:#ab791e">Konum doğrulanmadı</span>')+'</dd><dt>Plus Code / adres</dt><dd>'+esc(r.locationText||'—')+'</dd><dt>Konum kaynağı</dt><dd>'+esc(r.source||'—')+'</dd></dl>';
 if(cloud.enabled&&!!cloud.session&&['admin','superadmin'].includes(cloud.role)){body+='<div style="margin:12px 0"><button type="button" class="btnoutline" id="schoolPdfBtn">↓ Kurum PDF raporu</button></div>'; }
 body+='<div class="maplink"><a href="'+esc((r.locationText||'').startsWith('https://maps.')?r.locationText:(r.maps||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(r.name+' '+r.district+' Niğde'))))+'" target="_blank" rel="noopener noreferrer">Google Maps\'te kurumu ara ↗</a></div>';
 body+='<div class="modsection"><h3>Ziyaret geçmişi ('+allVisits.length+')</h3><div class="visit-history">'+(allVisits.length?allVisits.map(v=>visitHistoryHTML(v,admin)).join(''):'<div class="empty">Henüz ziyaret kaydı bulunmuyor.</div>')+'</div></div>';
 if(admin){if(mapSafe(r)){body+='<div class="modsection"><h3>Konum doğrulama</h3><div class="hint">Haritadaki noktanın doğru ilçe ve köy, belde veya mahallede olduğunu kontrol ettiysen onayla. Yerleşim girişinin tam noktasını bulmak zorunda değilsin.</div><button class="btnoutline" id="confirmLocation">'+(checkedLocation(r)?'✓ Yerleşim konumu onaylı':'✓ İlçe ve yerleşimi doğruladım')+'</button></div>'}body+='<div class="modsection"><h3>Yeni ziyaret kaydet</h3><div class="editgrid"><label>Ziyaret tarihi<input type="date" id="newDate" value="'+new Date().toISOString().slice(0,10)+'"></label><label>Ziyaret türü<select id="newType">'+VISIT_TYPES.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join('')+'</select></label><label class="span2">Etkinlik adı (isteğe bağlı)<input id="newEventName" maxlength="200" placeholder="Örn. Öğretmenler Odası Buluşması"></label><div class="span2"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Katılımcılar (birden fazla seçilebilir)</div><div class="participant-list">'+PARTICIPANT_OPTIONS.map((x,i)=>'<label class="participant-option"><input type="checkbox" class="newParticipant" value="'+esc(x)+'" id="participant-'+i+'"><span>'+esc(x)+'</span></label>').join('')+'</div><label id="participantOtherWrap" style="display:none;margin-top:7px">Diğer katılımcı (isteğe bağlı)<input id="newParticipantOther" maxlength="300" placeholder="Unvan / görev"></label></div><label class="span2">Ziyaret edilen sınıflar (isteğe bağlı)<input id="newClasses" maxlength="300" placeholder="Örn. 5/A, 6/B, 8/C"></label><label>Hediye verildi mi?<select id="newGift"><option value="">Belirtilmedi</option><option value="true">Evet</option><option value="false">Hayır</option></select></label><label class="span2">Hediye açıklaması (isteğe bağlı)<input id="newGiftDescription" maxlength="500" placeholder="Örn. Öğrencilere kitap hediye edildi"></label><label class="span2">Açıklama (isteğe bağlı, kişisel bilgi yazmayın)<textarea id="newNote" rows="3" maxlength="2000" placeholder="Ziyaretle ilgili kısa not..."></textarea></label></div><button class="btnprimary" style="margin-top:10px" id="addVisit">Ziyareti kaydet</button></div>';
 body+='<div class="modsection"><h3>Müdür ve iletişim bilgilerini düzenle</h3><div class="editgrid"><label>Müdür adı soyadı<input id="editDirector" value="'+esc(r.director)+'"></label><label>Telefon numarası<input id="editPhone" value="'+esc(r.phone)+'"></label></div><button id="saveContact" class="btnoutline" style="margin-top:10px">Bilgileri kaydet</button></div>';
-body+='<div class="modsection"><h3>Öğrenci ve öğretmen sayılarını güncelle</h3><div class="editgrid"><label>Toplam öğrenci sayısı<input type="number" id="editStudentCount" min="0" max="1000000" step="1" value="'+(r.studentCount??'')+'" placeholder="Veri girilmedi"></label><label>Toplam öğretmen sayısı<input type="number" id="editTeacherCount" min="0" max="1000000" step="1" value="'+(r.teacherCount??'')+'" placeholder="Veri girilmedi"></label></div><div class="hint" style="margin-top:7px">Boş alan “bilgi yok” anlamına gelir; 0 gerçek sıfır değeridir. Yalnızca toplam sayılar tutulur.</div><button id="saveCounts" class="btnoutline" style="margin-top:10px">Sayıları kaydet</button></div>';
+body+='<div class="modsection"><h3>Öğrenci, öğretmen ve derslik sayılarını güncelle</h3><div class="editgrid"><label>Toplam öğrenci sayısı<input type="number" id="editStudentCount" min="0" max="1000000" step="1" value="'+(r.studentCount??'')+'" placeholder="Veri girilmedi"></label><label>Toplam öğretmen sayısı<input type="number" id="editTeacherCount" min="0" max="1000000" step="1" value="'+(r.teacherCount??'')+'" placeholder="Veri girilmedi"></label><label>Derslik sayısı<input type="number" id="editClassroomCount" min="0" max="1000000" step="1" value="'+(r.classroomCount??'')+'" placeholder="Veri girilmedi"></label></div><div class="hint" style="margin-top:7px">Boş alan “bilgi yok” anlamına gelir; 0 gerçek sıfır değeridir. Yalnızca toplam sayılar tutulur.</div><button id="saveCounts" class="btnoutline" style="margin-top:10px">Sayıları kaydet</button></div>';
  body+='<div class="modsection"><h3>Konum bilgisini düzelt</h3><div class="editgrid"><label class="span2">Google Maps Plus Code / adres<input id="editLocText" value="'+esc(r.locationText)+'"></label><label>Enlem<input id="editLat" value="'+esc(r.lat??'')+'" placeholder="37.545000"></label><label>Boylam<input id="editLon" value="'+esc(r.lon??'')+'" placeholder="34.480000"></label></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button id="decode" class="btnoutline">Plus Code’u koordinata çevir</button><button id="saveLocation" class="btnprimary">Konumu kaydet</button></div><div class="warning">Kısa Plus Code ilçe referansıyla çözümlenir. Konumu Google Maps üzerinde kontrol edin. Açık adres tek başına otomatik konuma çevrilmez.</div></div>'}
-else{body+='<div class="warning">Detaylar ve veri değişimi için giriş yapınız.</div>'}
+else{body+='<div class="warning">Görüntüleme modu: Verileri değiştirmek için yönetici hesabınızla giriş yapın.</div>'}
 $('modalBody').innerHTML=body;const otherCheck=[...document.querySelectorAll('.newParticipant')].find(x=>x.value==='Diğer');if(otherCheck){otherCheck.addEventListener('change',()=>{const wrap=$('participantOtherWrap');wrap.style.display=otherCheck.checked?'block':'none';if(!otherCheck.checked)$('newParticipantOther').value='';});}$('shade').classList.add('open');document.body.style.overflow='hidden';}
 function closeModal(){$('shade').classList.remove('open');document.body.style.overflow='';selectedCode=null}
 async function modalAction(e){
@@ -741,7 +735,7 @@ async function modalAction(e){
    const code=selectedCode;
    if(t.closest('[data-del]')&&!confirm('Bu ziyaret kaydı silinsin mi?'))return;
    const isLocal=localDemo();
-   let date,note,visitType,participants,eventName,visitedClasses,giftGiven,giftDescription,studentCount,teacherCount,lat,lon,has;
+   let date,note,visitType,participants,eventName,visitedClasses,giftGiven,giftDescription,studentCount,teacherCount,classroomCount,lat,lon,has;
    if(t.closest('#addVisit')){
      date=$('newDate').value;note=$('newNote').value.trim();visitType=$('newType').value;
      participants=[...document.querySelectorAll('.newParticipant:checked')].map(x=>x.value);if(participants.includes('Diğer')&&$('newParticipantOther').value.trim()){participants=participants.filter(x=>x!=='Diğer');participants.push('Diğer: '+$('newParticipantOther').value.trim());}participants=participants.join(', ');
@@ -752,7 +746,8 @@ async function modalAction(e){
    if(t.closest('#saveCounts')){
      studentCount=validCount($('editStudentCount').value);
      teacherCount=validCount($('editTeacherCount').value);
-     if(Number.isNaN(studentCount)||Number.isNaN(teacherCount))throw Error('Öğrenci ve öğretmen sayıları negatif olmayan tam sayı olmalı.');
+     classroomCount=validCount($('editClassroomCount').value);
+     if(Number.isNaN(studentCount)||Number.isNaN(teacherCount)||Number.isNaN(classroomCount))throw Error('Öğrenci ve öğretmen sayıları negatif olmayan tam sayı olmalı.');
    }
    if(t.closest('#saveLocation')){
      let a=$('editLat').value.trim().replace(',','.'),b=$('editLon').value.trim().replace(',','.');
@@ -832,7 +827,7 @@ async function modalAction(e){
    }else if(t.closest('#saveContact')){
      await cloudWrite('school_contacts?on_conflict=school_id','POST',{school_id:code,director_name:$('editDirector').value.trim(),phone:$('editPhone').value.trim()},{'Prefer':'resolution=merge-duplicates,return=minimal'});
    }else if(t.closest('#saveCounts')){
-     await cloudWrite('schools?code=eq.'+encodeURIComponent(code),'PATCH',{student_count:studentCount,teacher_count:teacherCount},{'Prefer':'return=minimal'});
+     await cloudWrite('school_statistics?on_conflict=school_id','POST',{school_id:code,student_count:studentCount,teacher_count:teacherCount,classroom_count:classroomCount},{'Prefer':'resolution=merge-duplicates,return=minimal'});
    }else if(t.closest('#saveLocation')){
      await cloudWrite('schools?code=eq.'+encodeURIComponent(code),'PATCH',{lat,lon,location_text:$('editLocText').value.trim(),source:'Yetkili tarafından güncellendi'},{'Prefer':'return=minimal'});
      await cloudWrite('location_reviews?school_id=eq.'+encodeURIComponent(code),'DELETE',null,{'Prefer':'return=minimal'});
@@ -848,11 +843,11 @@ function csvCell(s){return '"'+String(s??'').replace(/"/g,'""')+'"'}
 function downloadCsv(){
  if(!isManager())return showToast('CSV yalnızca yetkili yöneticiye açıktır.');
  let rows=filtered(),manager=isManager();
- let head=['Kurum Kodu','Kurum Adı','İlçe','Genel Müdürlük','Kurum Türü','Kademe','Resmi / Özel','Öğrenci Sayısı','Öğretmen Sayısı','Enlem','Boylam','Google Maps Konum Bilgisi','Seçili Dönemde Ziyaret','Tüm Ziyaret Sayısı'];
- if(manager)head.splice(9,0,'Müdür','Telefon');
+ let head=['Kurum Kodu','Kurum Adı','İlçe','Genel Müdürlük','Kurum Türü','Kademe','Resmi / Özel','Öğrenci Sayısı','Öğretmen Sayısı','Derslik Sayısı','Enlem','Boylam','Google Maps Konum Bilgisi','Seçili Dönemde Ziyaret','Tüm Ziyaret Sayısı'];
+ if(manager)head.splice(10,0,'Müdür','Telefon');
  let out=[head,...rows.map(r=>{
-   let ar=[r.code,r.name,r.district,r.gm,r.type,r.level,r.ownership,r.studentCount,r.teacherCount,r.lat,r.lon,r.locationText,isVisited(r)?'Evet':'Hayır',(db.visits[r.code]||[]).length];
-   if(manager)ar.splice(9,0,r.director,r.phone);
+   let ar=[r.code,r.name,r.district,r.gm,r.type,r.level,r.ownership,r.studentCount,r.teacherCount,r.classroomCount,r.lat,r.lon,r.locationText,isVisited(r)?'Evet':'Hayır',(db.visits[r.code]||[]).length];
+   if(manager)ar.splice(10,0,r.director,r.phone);
    return ar;
  })];
  download('Nigde_Filtreli_Kurumlar.csv','\ufeff'+out.map(r=>r.map(csvCell).join(';')).join('\r\n'),'text/csv;charset=utf-8');
@@ -967,7 +962,7 @@ async function cloudWrite(path,method,body,headers={}){
  return cloudReq(path,{method,body,headers});
 }
 async function readSchoolRows(){
- return cloudReq('schools?select=code,name,district,type,gm,level,ownership,boarding,maps,location_text,lat,lon,source,position_status,spatial_status,spatial_district,student_count,teacher_count&order=code.asc');
+ return cloudReq('schools?select=code,name,district,type,gm,level,ownership,boarding,maps,location_text,lat,lon,source,position_status,spatial_status,spatial_district,status_note&order=code.asc');
 }
 function mergeVisits(rows,notes=[]){
  const mp=new Map(notes.map(n=>[String(n.visit_id),n]));
@@ -983,17 +978,19 @@ async function reloadCloudData(){
  if(!Array.isArray(s)||!s.length)throw Error('Kurum tablosunda kayıt bulunamadı. Önce 340 kurumun SQL yüklemesini yapın.');
  const translated=s.map(r=>({code:r.code,name:r.name,district:r.district,type:r.type,gm:r.gm,level:r.level,ownership:r.ownership,boarding:r.boarding,maps:r.maps,
    locationText:r.location_text,lat:r.lat,lon:r.lon,source:r.source,positionStatus:r.position_status,spatialStatus:r.spatial_status,spatialDistrict:r.spatial_district,
-   director:'',phone:'',studentCount:r.student_count,teacherCount:r.teacher_count}));
+   director:'',phone:'',studentCount:null,teacherCount:null,classroomCount:null,statusNote:r.status_note||''}));
  BASE.splice(0,BASE.length,...translated);
  db.coords={};db.contacts={};db.locReviews={};db.counts={};
  for(const rv of reviews)db.locReviews[rv.school_id]={lat:rv.latitude,lon:rv.longitude,verifiedAt:rv.verified_at};
  let notes=[];
  if(isManager()){
-  const [contacts,privNotes]=await Promise.all([
+  const [contacts,privNotes,statistics]=await Promise.all([
     cloudReq('school_contacts?select=school_id,director_name,phone'),
-    cloudReq('visit_details?select=visit_id,description,event_name,visited_classes,gift_given,gift_description')
+    cloudReq('visit_details?select=visit_id,description,event_name,visited_classes,gift_given,gift_description'),
+    cloudReq('school_statistics?select=school_id,student_count,teacher_count,classroom_count')
   ]);
   for(const c of contacts)db.contacts[c.school_id]={director:c.director_name,phone:c.phone};
+  for(const x of statistics)db.counts[x.school_id]={studentCount:x.student_count,teacherCount:x.teacher_count,classroomCount:x.classroom_count};
   notes=privNotes;
  }
  mergeVisits(v,notes);
@@ -1069,8 +1066,8 @@ function printSchoolReport(code){
  if(cloud.enabled&&!cloud.dataReady)return showToast('Kurum raporu için güncel kayıtların yüklenmesi gerekiyor.');
  const original=BASE.find(x=>x.code===String(code));if(!original)return;
  const s=info(original),authorized=isManager();
- const rows=[['Kurum adı',s.name],['Kurum kodu',s.code],['İlçe',s.district],['Kurum türü',s.type],['Genel müdürlük',s.gm],['Kademe',s.level],['Resmî / Özel',s.ownership],['Pansiyonlu',s.boarding==='1'?'Evet':'Hayır'],['Öğrenci sayısı',s.studentCount??'Bilgi girilmedi'],['Öğretmen sayısı',s.teacherCount??'Bilgi girilmedi']];
- if(authorized){rows.push(['Kurum müdürü',s.director||'Bilgi girilmedi'],['Kurum telefonu',s.phone||'Bilgi girilmedi']);}
+ const rows=[['Kurum adı',s.name],['Kurum kodu',s.code],['İlçe',s.district],['Kurum türü',s.type],['Genel müdürlük',s.gm],['Kademe',s.level],['Resmî / Özel',s.ownership],['Kurum durumu',s.statusNote||'—'],['Pansiyonlu',s.boarding==='1'?'Evet':'Hayır'],['Öğrenci sayısı',s.studentCount??'Bilgi Bulunmamaktadır.'],['Öğretmen sayısı',s.teacherCount??'Bilgi Bulunmamaktadır.'],['Derslik sayısı',s.classroomCount??'Bilgi Bulunmamaktadır.']];
+ if(authorized){rows.push(['Kurum müdürü',s.director||'Bilgi Bulunmamaktadır.'],['Kurum telefonu',s.phone||'Bilgi Bulunmamaktadır.']);}
  rows.push(['Enlem / boylam',isLocated(s)?s.lat+', '+s.lon:'Koordinat bulunmuyor'],['Adres / Plus Code',s.locationText||'—'],['Konum kaynağı',s.source||'—']);
  const visits=(db.visits[s.code]||[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
  let html='<h1>Niğde İl Millî Eğitim Müdürlüğü</h1><div class="reportSubtitle">Eğitim Kurumu Bilgi ve Ziyaret Raporu · '+esc(new Date().toLocaleDateString('tr-TR'))+'<div>'+ (authorized?'Yönetici raporu · Yetkili bilgiler içerir':'Herkese açık bilgiler')+'</div></div>';
