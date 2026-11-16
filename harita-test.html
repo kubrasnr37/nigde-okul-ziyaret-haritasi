@@ -198,6 +198,45 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
 .visit-edit-fields input,.visit-edit-fields textarea,.visit-edit-fields select{display:block;width:100%;border:1px solid #cdd9e4;border-radius:7px;padding:8px;margin-top:5px}
 .visit-edit-fields .wide{grid-column:1/-1}
 @media(max-width:550px){.visit-edit-fields{grid-template-columns:1fr}}
+
+/* 16.11.2026 - Ziyaret analizi genel gorsel duzen: yalnizca sunum katmani. */
+#analysisOverlay .analysisMain{max-width:1280px;padding:24px 22px 64px}
+#analysisOverlay .analysisFilters{padding:15px 17px;background:#fff;border:1px solid #dde6ef;border-radius:12px;box-shadow:0 3px 14px #172d4407;gap:14px}
+#analysisOverlay .analysisFilters label{gap:7px;letter-spacing:.1px}
+#analysisOverlay .analysisFilters select{min-width:180px;border-radius:8px;background:#fbfcfe}
+#analysisOverlay .analysisKpi,#analysisOverlay .analysisPanel{border:1px solid #dde6ee;border-radius:14px;box-shadow:0 5px 19px rgba(23,45,68,.035)}
+#analysisOverlay .analysisSummary{gap:13px;margin-bottom:18px}
+#analysisOverlay .analysisKpi{min-height:109px;padding:17px 18px;border-top:3px solid #dce5ee}
+#analysisOverlay .analysisKpi:nth-child(2){border-top-color:#159264}
+#analysisOverlay .analysisKpi:nth-child(3){border-top-color:#7d9cba}
+#analysisOverlay .analysisKpi:nth-child(4){border-top-color:#d83c50}
+#analysisOverlay .analysisKpi strong{font-size:30px;letter-spacing:-.4px;margin:7px 0 0}
+#analysisOverlay .analysisColumns{gap:18px}
+#analysisOverlay .analysisPanel{padding:20px 21px}
+#analysisOverlay .analysisPanel h3{font-size:18px;line-height:1.35;margin:0 0 6px}
+#analysisOverlay .analysisPanel p{line-height:1.5;margin-bottom:17px}
+#analysisOverlay .analysisBarRow{display:grid;grid-template-columns:105px minmax(0,1fr) 104px;gap:13px;align-items:center;margin:0;padding:10px 0;border-bottom:1px solid #eff3f7;font-size:12px;min-width:0}
+#analysisOverlay .analysisBarRow:last-child{border-bottom:0}
+#analysisOverlay .analysisBarLabel{color:#29445d;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+#analysisOverlay .analysisTrack{width:100%;height:11px;border-radius:25px;background:#edf2f6;overflow:hidden}
+#analysisOverlay .analysisFill{height:100%;border-radius:25px;background:#159264}
+#analysisOverlay .analysisMonth{background:#7d9cba}
+#analysisOverlay .analysisBarMetrics{display:flex;justify-content:flex-end;align-items:center;gap:9px;white-space:nowrap;min-width:0;font-variant-numeric:tabular-nums}
+#analysisOverlay .analysisBarCount{color:#75869a;font-size:11px}
+#analysisOverlay .analysisBarPercent{display:inline-flex;justify-content:center;align-items:center;min-width:43px;padding:4px 7px;border:1px solid #e4eaf0;border-radius:7px;background:#f3f6f9;color:#1b3048;font-weight:700;font-size:12px}
+#analysisOverlay .analysisTableWrap{border-color:#e2eaf1;border-radius:10px}
+#analysisOverlay .analysisTableWrap th{background:#f4f7fa;color:#526b82;font-size:11px;letter-spacing:.15px}
+#analysisOverlay .analysisTableWrap td{line-height:1.55;color:#2c4259}
+#analysisOverlay .analysisTableWrap tbody tr:nth-child(even){background:#fafcfe}
+#analysisOverlay .analysisTableWrap tbody tr:hover{background:#eef5f9}
+#analysisOverlay .analysisReportActions{margin:0 0 12px}
+#analysisOverlay .analysisReportActions button{border-radius:8px;padding:8px 11px}
+#analysisOverlay .analysisStatus{line-height:1.5}
+@media(max-width:1200px){#analysisOverlay .analysisBarRow{grid-template-columns:93px minmax(0,1fr) 94px;gap:9px}#analysisOverlay .analysisBarMetrics{gap:5px}#analysisOverlay .analysisPanel{padding:16px}}
+@media(max-width:940px){#analysisOverlay .analysisColumns{grid-template-columns:1fr}#analysisOverlay .analysisSummary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#analysisOverlay .analysisMain{padding:15px 10px 36px}#analysisOverlay .analysisFilters{padding:12px}#analysisOverlay .analysisSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#analysisOverlay .analysisKpi{min-height:94px;padding:12px}#analysisOverlay .analysisKpi strong{font-size:25px}#analysisOverlay .analysisBarRow{grid-template-columns:85px minmax(0,1fr) 88px;gap:7px}#analysisOverlay .analysisBarMetrics{gap:4px}#analysisOverlay .analysisBarPercent{min-width:36px;padding:3px 4px}}
+@media print{#analysisOverlay .analysisMain{max-width:none!important;padding:0!important}#analysisOverlay .analysisFilters{display:none!important}#analysisOverlay .analysisKpi{min-height:0!important;padding:9px!important;box-shadow:none!important}#analysisOverlay .analysisBarRow{grid-template-columns:100px minmax(0,1fr) 100px!important;gap:8px!important;padding:6px 0!important;break-inside:avoid}#analysisOverlay .analysisBarCount{font-size:10px!important}#analysisOverlay .analysisBarPercent{padding:2px 5px!important}#analysisOverlay .analysisPanel{box-shadow:none!important;padding:10px!important}#analysisOverlay .analysisSummary{grid-template-columns:repeat(5,minmax(0,1fr))!important}#analysisOverlay .analysisTableWrap tbody tr:nth-child(even){background:#fafcfe!important}}
+
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
@@ -1021,7 +1060,7 @@ function analysisDraw(){
  $('analysisDistrictBars').innerHTML=districts.map(name=>{
   const schools=d.list.filter(s=>s.district===name),done=schools.filter(s=>aVisitRecords(s.code,d.period).length).length;
   const pct=schools.length?100*done/schools.length:0;
-  return '<div class="analysisBarRow"><span>'+esc(name)+'</span><div class="analysisTrack"><div class="analysisFill" style="width:'+pct.toFixed(2)+'%"></div></div><span class="num">'+done+'/'+schools.length+' · '+Math.round(pct)+'%</span></div>';
+  return '<div class="analysisBarRow"><span class="analysisBarLabel">'+esc(name)+'</span><div class="analysisTrack" role="progressbar" aria-label="'+esc(name)+' ziyaret oranı" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(pct)+'"><div class="analysisFill" style="width:'+pct.toFixed(2)+'%"></div></div><span class="analysisBarMetrics"><span class="analysisBarCount">'+done+'/'+schools.length+'</span><span class="analysisBarPercent">'+Math.round(pct)+'%</span></span></div>';
  }).join('')||'<div class="analysisEmpty">Kurum bulunamadı.</div>';
  const months=new Map();
  for(const v of d.allVisits){if(!/^\d{4}-\d{2}-\d{2}$/.test(v.date||''))continue;const key=v.date.slice(0,7);months.set(key,(months.get(key)||0)+1);}
@@ -1032,7 +1071,7 @@ function analysisDraw(){
  $('analysisMonthBars').innerHTML=keys.map(key=>{
   const value=months.get(key)||0, [y,m]=key.split('-');
   const title=new Date(Number(y),Number(m)-1,1).toLocaleDateString('tr-TR',{month:'short',year:'numeric'});
-  return '<div class="analysisBarRow"><span>'+esc(title)+'</span><div class="analysisTrack"><div class="analysisFill analysisMonth" style="width:'+(100*value/max).toFixed(2)+'%"></div></div><span class="num">'+value+' ziyaret</span></div>';
+  return '<div class="analysisBarRow"><span class="analysisBarLabel">'+esc(title)+'</span><div class="analysisTrack" role="progressbar" aria-label="'+esc(title)+' ziyaret sayısı" aria-valuemin="0" aria-valuemax="'+max+'" aria-valuenow="'+value+'"><div class="analysisFill analysisMonth" style="width:'+(100*value/max).toFixed(2)+'%"></div></div><span class="analysisBarMetrics"><span class="analysisBarCount">'+value+' kayıt</span></span></div>';
  }).join('')||'<div class="analysisEmpty">Henüz ziyaret kaydı yok.</div>';
  const sortSchools=(a,b)=>a.district.localeCompare(b.district,'tr')||a.name.localeCompare(b.name,'tr');
  $('analysisVisitedCount').textContent='('+d.visitedList.length+' kurum)';
