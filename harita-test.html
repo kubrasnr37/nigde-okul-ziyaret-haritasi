@@ -237,6 +237,28 @@ body.superadmin-map-tools #roadStyle{display:inline-block!important}
 @media(max-width:600px){#analysisOverlay .analysisMain{padding:15px 10px 36px}#analysisOverlay .analysisFilters{padding:12px}#analysisOverlay .analysisSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#analysisOverlay .analysisKpi{min-height:94px;padding:12px}#analysisOverlay .analysisKpi strong{font-size:25px}#analysisOverlay .analysisBarRow{grid-template-columns:85px minmax(0,1fr) 88px;gap:7px}#analysisOverlay .analysisBarMetrics{gap:4px}#analysisOverlay .analysisBarPercent{min-width:36px;padding:3px 4px}}
 @media print{#analysisOverlay .analysisMain{max-width:none!important;padding:0!important}#analysisOverlay .analysisFilters{display:none!important}#analysisOverlay .analysisKpi{min-height:0!important;padding:9px!important;box-shadow:none!important}#analysisOverlay .analysisBarRow{grid-template-columns:100px minmax(0,1fr) 100px!important;gap:8px!important;padding:6px 0!important;break-inside:avoid}#analysisOverlay .analysisBarCount{font-size:10px!important}#analysisOverlay .analysisBarPercent{padding:2px 5px!important}#analysisOverlay .analysisPanel{box-shadow:none!important;padding:10px!important}#analysisOverlay .analysisSummary{grid-template-columns:repeat(5,minmax(0,1fr))!important}#analysisOverlay .analysisTableWrap tbody tr:nth-child(even){background:#fafcfe!important}}
 
+
+/* 16.11.2026 · Analiz okunabilirlik ve beş KPI renk dengesi */
+#analysisOverlay .analysisKpi:nth-child(1){border-top-color:#c99852}
+#analysisOverlay .analysisKpi:nth-child(5){border-top-color:#766aa5}
+#analysisOverlay .analysisKpi small{font-size:13px;line-height:1.45}
+#analysisOverlay .analysisPanel h3{font-size:19px}
+#analysisOverlay .analysisPanel p{font-size:13.5px;line-height:1.6}
+#analysisOverlay .analysisBarRow{font-size:13.5px;grid-template-columns:112px minmax(0,1fr) 116px;gap:14px;padding:12px 0}
+#analysisOverlay .analysisBarLabel{font-size:13px}
+#analysisOverlay .analysisBarCount{font-size:12.5px}
+#analysisOverlay .analysisBarPercent{font-size:13.5px;min-width:48px;padding:5px 8px}
+#analysisOverlay .analysisTableWrap table{font-size:13px}
+#analysisOverlay .analysisTableWrap th{font-size:12.5px;line-height:1.5;padding:11px 12px}
+#analysisOverlay .analysisTableWrap td{font-size:13px;line-height:1.6;padding:11px 12px}
+#analysisOverlay .analysisFilters label{font-size:13px}
+#analysisOverlay .analysisFilters select,#analysisOverlay .analysisFilters button{font-size:13px}
+#analysisOverlay .analysisStatus,#analysisOverlay .analysisListCount{font-size:13px}
+#analysisOverlay .analysisReportActions button{font-size:13px}
+@media(max-width:1200px){#analysisOverlay .analysisBarRow{grid-template-columns:98px minmax(0,1fr) 108px;gap:9px}}
+@media(max-width:600px){#analysisOverlay .analysisBarRow{grid-template-columns:85px minmax(0,1fr) 94px;gap:6px;font-size:12px}#analysisOverlay .analysisBarLabel{font-size:12px}#analysisOverlay .analysisBarCount{font-size:11px}#analysisOverlay .analysisBarPercent{font-size:12px;min-width:38px;padding:3px 4px}}
+@media print{#analysisOverlay .analysisKpi small{font-size:9px!important}#analysisOverlay .analysisPanel p{font-size:10px!important}#analysisOverlay .analysisTableWrap table,#analysisOverlay .analysisTableWrap th,#analysisOverlay .analysisTableWrap td{font-size:9px!important;padding:5px 6px!important}#analysisOverlay .analysisBarLabel,#analysisOverlay .analysisBarPercent{font-size:10px!important}#analysisOverlay .analysisBarRow{font-size:10px!important;padding:6px 0!important}}
+
 </style></head>
 <body>
 <header class="top"><div class="brand"><div class="logo">⌖</div><div><h1>Niğde Eğitim Kurumları Ziyaret Takip Sistemi</h1><small>İl Millî Eğitim Müdürü Ziyaretleri · Niğde geneli · 6 ilçe</small></div></div><div class="hcontrols"><span class="pill" id="accessLabel">🌐 Herkese açık harita</span><label id="demoWrap" class="pill" title="Supabase kullanılmıyorken sadece bu tarayıcıda test kaydı oluşturur"><input type="checkbox" id="demoMode"> Yerel deneme modu</label><button id="loginBtn" class="headerbtn">Yönetici girişi</button><button id="analysisOpenBtn" class="headerbtn" title="Ziyaret analizlerini görüntüle">▤ Ziyaret analizi</button><button id="refreshBtn" class="headerbtn" title="Merkezî verileri yeniden yükle">↻ Güncelle</button><input id="admin" type="checkbox" hidden disabled><button id="export" class="headerbtn" hidden>↓ Yönetici JSON yedeği</button><button id="importbtn" class="headerbtn" hidden disabled>↑ JSON yükleme</button><input id="fileimport" type="file" accept="application/json,.json" hidden></div></header>
